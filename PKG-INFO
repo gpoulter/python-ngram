@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: ngram
+Version: 2.0.0b2
+Summary: A module inspired by String::Trigram (Perl) to get a similarity between two strings
+Home-page: http://exhuma.wicked.lu/projects/python-ngram
+Author: Michel Albert
+Author-email: exhuma@users.sourceforge.net
+License: LGPL
+Description: UNKNOWN
+Platform: UNKNOWN
