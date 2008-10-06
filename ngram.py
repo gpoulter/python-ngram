@@ -102,7 +102,7 @@ class ngram:
       """
       if ic is None:          ic = self.__ic
       if only_alnum is None:  only_alnum = self.__only_alnum
-      if padding is None:     padding = 'X' * self.__padding
+      if padding is None:     padding = u'\xa0' * self.__padding
       if noise is None:       noise   = self.__noise
 
       seen  = {}
@@ -117,7 +117,7 @@ class ngram:
          if seen.has_key(tmpstr): continue
          seen[tmpstr] = 1
 
-         tmpstr = padding + tmpstr + padding
+         tmpstr = padding + tmpstr.replace(u'\xa0', ' ') + padding
          length = len(tmpstr)
          for i in xrange( length - self.__ngram_len + 1 ):
             ngram = tmpstr[i:i+self.__ngram_len]
@@ -165,7 +165,7 @@ class ngram:
       if self.__ic:         string = string.lower()
       for char in self.__noise:
          string = string.replace(char, '')
-      string = 'X' * self.__padding + string + 'X' * self.__padding
+      string = u'\xa0' * self.__padding + string.replace(u'\xa0', ' ') + u'\xa0' * self.__padding
 
       numgram = len(string) - self.__ngram_len + 1
 
