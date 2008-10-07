@@ -14,33 +14,31 @@ http://search.cpan.org/dist/String-Trigram/
 
 @copyright: Copyright (C) 2005 Michel Albert
 
-Modifications by Graham Poulter:
-
+Modifications by Graham Poulter
  - Added Epydoc docstrings for API documentation.
- 
  - Factored out functions like pad() and split()
- 
- - Replaced ignore_case and other options with a generic "transform" function.
-
+ - Replaced ignore_case and other options with generic transform.
  - Python 2.x updates: e.g. "x in d" instead of "d.has_key(x)", d.setdefault
    instead of conditionals.
- 
- - Renamed identifieers to conform to PEP 8 (style guide)
- 
- - Redued memory usage by eliminating the innermost layer of 
+ - Renamed identifiers to conform to PEP 8 (style guide)
+ - Reduced memory usage by eliminating the innermost layer of 
    dictionaries (now storing only number of shared grams).
 
 """
 
 __version__ = (3,0,0)
 
-__license__ = """This library is free software; you can redistribute it
-and/or modify it under he terms of the GNU Lesser General Public License as
-published by the Free oftware Foundation; either version 2.1 of the License,
-or (at your option) ny later version.This library is distributed in the hope
-that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-Lesser General Public License for more details. """
+__license__ = """
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+"""
 
    
 class ngram:
