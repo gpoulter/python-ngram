@@ -1,31 +1,33 @@
 """
-A Python module to index objects and look up similar objects, based
-on the N-gram similarity between strings. 
+A Python module implementing a set-like object which has facilities to
+retrieve similar objects from the set based on N-gram similarity
+between strings.
 
 @note: Compatible with Python 2.6
 
 The string-comparison algorithm is based from String::Trigram by Tarek Ahmed:
   http://search.cpan.org/dist/String-Trigram/
 
-@author: Graham Poulter 
+@author: Michel Albert, Graham Poulter 
 
-Based on "python-ngram" by Michel Albert, and rewritten by Graham Poulter:
+Changes in version 3 by Graham:
  
- 1. Reduced memory usage by eliminating the innermost level of dictionaries.
- This stores just the number of shared grams at the lowest level.
+ 1. Eliminated innermost level of dictionaries to reduce memory
+ usage. Now stores innermost dict is just to look up the number of
+ times the n-grams occurs in the item.
 
- 2. Rewritten using a new functional decomposition, Python 2.4+ idioms, PEP 8
- naming conventions, and Epydoc API documentation.
+ 2. New functional decomposition, Python 2.6 idioms, PEP 8 naming
+ conventions, and Epydoc API documentation.
 
- 3. Generalised the code to index any hashable object by means of a str_item
- function to generate an appropriate string from the item NGram indexing. No
- longer limited to indexing and retrieving strings.
+ 3. Generalised the code to index any hashable object by means of a
+ str_item function to generate an appropriate string from the item
+ NGram indexing. No longer limited to indexing and retrieving strings.
 
- 4. Rewritten again as a subclass the of built-in set, after realising that it
- is really a set of items extended with NGram search capabilities.
+ 4. Refactored as a subclass the of built-in set, since it is really
+ a set of things with fuzzy NGram lookup ability.
 """
 
-__version__ = (4,0,0)
+__version__ = (3,0,0)
 
 __license__ = """
 This library is free software; you can redistribute it and/or
@@ -37,6 +39,8 @@ This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
+
+See LICENSE file or http://www.gnu.org/licenses/lgpl-2.1.html
 """
 
 import copy
@@ -177,7 +181,7 @@ class NGram(set):
       remaining = {}
       for ngram in self.ngrams_pad(self._str_query(query)):
          try:
-            for match, count in self._grams[ngram].items():
+            for match, count in self._grams[ngram].iteritems():
                remaining.setdefault(ngram, {}).setdefault(match, count)
                # match up to as many occurrences of ngram as exist in the matched string
                if remaining[ngram][match] > 0:
@@ -201,7 +205,7 @@ class NGram(set):
       only for matches above the similarity threshold. {'abc': 1.0, 'abcd': 0.8}
       """
       results = {}
-      for match, samegrams in self.items_sharing_ngrams(query).items():
+      for match, samegrams in self.items_sharing_ngrams(query).iteritems():
          allgrams = (len(self.pad(self._str_query(query))) 
                      + self._length[match] - (2 * self._N) - samegrams + 2)
          similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
@@ -216,7 +220,7 @@ class NGram(set):
       @param count: Maximum number of results to return.  None to return all results.
       @return: List of pairs of (item,similarity) by decreasing similarity.
       """
-      results = sorted(self.search(query).items(), key=lambda x:x[1], reverse=True)
+      results = sorted(self.search(query).iteritems(), key=lambda x:x[1], reverse=True)
       if count is not None:
          results = results[:count]
       return results
