@@ -24,7 +24,7 @@ from pprint import pprint as pp
 import unittest
 import string
 
-from ngram import ngram
+from ngram import NGram
 
 class NgramTests(unittest.TestCase):
     """Tests of the ngram class"""
@@ -35,7 +35,7 @@ class NgramTests(unittest.TestCase):
 
         items = ['sdafaf','asfwef','asdfawe','adfwe', 'askfjwehiuasdfji']
         
-        tg = ngram(items)
+        tg = NGram(items)
 
         self.assertEqual(
             tg.similar_items('askfjwehiuasdfji'),
@@ -48,7 +48,7 @@ class NgramTests(unittest.TestCase):
                          [('adfwe', 0.59999999999999998), 
                           ('asdfawe', 0.20000000000000001)])
 
-        self.assertEqual(ngram.compare('sdfeff', 'sdfeff'), 1.0)
+        self.assertEqual(NGram.compare('sdfeff', 'sdfeff'), 1.0)
 
 
     def test_split(self):
@@ -57,21 +57,21 @@ class NgramTests(unittest.TestCase):
         abcgrams = ['$$a', '$ab', 'abc', 'bc$', 'c$$']
         
         # Basic splitting into n-grams
-        index = ngram()
-        self.assertEqual(list(index.split(index.encode("abc"))), abcgrams)
+        index = NGram()
+        self.assertEqual(list(index.split(index.item_encode("abc"))), abcgrams)
 
-        # Test transforming to lowercase
-        index = ngram(transform=string.lower)
-        self.assertEqual(list(index.split(index.encode("AbC"))), abcgrams)
+        # Transforming string to lowercase first.
+        index = NGram(item_transform=string.lower)
+        self.assertEqual(list(index.split(index.item_encode("AbC"))), abcgrams)
         
-        # Demonstrate that multi-byte characters fall prey to the 1 char == 1 byte assumption
-        # Note: utf-8 encoding of é is \xc3\xa9
-        index = ngram(pad_len=1)
-        self.assertEqual(list(index.split(index.encode('é'))), ['$\xc3\xa9', '\xc3\xa9$'])
+        # Encoded byte strings are split into bytes, not necessarily characters.
+        # For example, the utf-8 encoding of é (\xe9) is \xc3\xa9
+        index = NGram(pad_len=1)
+        self.assertEqual(list(index.split(index.item_encode('é'))), ['$\xc3\xa9', '\xc3\xa9$'])
         
-        # Unicode strings don't have this problem.
-        # Note: unicode character for é is \xe9
-        self.assertEqual(list(index.split(index.encode(u'é'))), [u'$\xe9$'])
+        # Unicode strings are correctly split into characters.
+        # Fox example, the unicode character for é is \xe9
+        self.assertEqual(list(index.split(index.item_encode(u'é'))), [u'$\xe9$'])
 
 
 if __name__ == "__main__":

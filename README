@@ -1,45 +1,37 @@
-Introduction
-============
+.. -*- mode:rst -*-
+=============
+ NGramSearch
+=============
 
-A module to calculate the similarity of a pair of strings, and to look
-up similar strings in a dictionary-like structure. Inspired by Perl's
-String::Trigram.
 
-Homepage: http://python-ngram.sourceforge.net/
+Description
+===========
+
+NGramSearch retrieves items that are similar to a query, based on
+N-Gram similarity.  The items and query may be strings, or any object
+that can be transformed to a string by means of the `item_transform` and
+`query_transform` parameters.
+
+The algorithm is derived from Perl's String::Trigram module.  The
+NGramSearch module is a rewrite of the python-ngram_ module, designed
+to support queries for arbitrary objects.
+
+python_ngram: http://python-ngram.sourceforge.net/
 
 Installation
 ============
 
-Install in /usr/local::
+Install using setuptools::
 
-  python setup.py --prefix=/usr/local
+  python setup.py install
 
-Just link to this source directory so code can be edited here::
+View the documentation::
 
-  ./setup.py develop --prefix=/usr/local
-
-
-Usage
-=====
-
->>> from ngram import ngram
->>> help(ngram)
+  pydoc ngramsearch.NGramSearch
 
 
-API Documentation
-=================
-
-Run::
-
- epydoc -v ngram.py
-
-To generate API documentation in ./html/index.html
-
-See http://epydoc.sourceforge.net/
-
-
-License
-=======
+LGPL 2.1 License
+================
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name='ngram',
-    version='2.1',
+    version='3.0',
     py_modules=['ngram'],
     zip_safe=True,
 
@@ -15,6 +15,6 @@ setup(
     license='LGPL',
 
     url='http://www.sourceforge.net/projects/python-ngram',
-    description="""A module to calculate the similarity of a pair of strings, and to look up similar strings in a dictionary-like structure. Inspired by Perl's String::Trigram.""",
+    description="A dictionary-like data structure to retrieve objects similar to a query object using N-Gram similarity",
     keywords="ngram string similarity",
 )
