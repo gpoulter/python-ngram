@@ -1,21 +1,45 @@
-A module inspired by String::Trigram (Perl) to get similarity between two strings
-and retrieve the most similar strings in a collection to a query string.
+Introduction
+============
+
+A module to calculate the similarity of a pair of strings, and to look
+up similar strings in a dictionary-like structure. Inspired by Perl's
+String::Trigram.
 
 Homepage: http://python-ngram.sourceforge.net/
 
-Usage:
+Installation
+============
+
+Install in /usr/local::
+
+  python setup.py --prefix=/usr/local
+
+Just link to this source directory so code can be edited here::
+
+  ./setup.py develop --prefix=/usr/local
+
+
+Usage
+=====
 
 >>> from ngram import ngram
 >>> help(ngram)
 
-Also see the Epydoc API documentation in ./html/index.html, which
-if not present can be created by running 'epydoc -v ngram.py'
-(see http://epydoc.sourceforge.net/)
+
+API Documentation
+=================
+
+Run::
+
+ epydoc -v ngram.py
+
+To generate API documentation in ./html/index.html
+
+See http://epydoc.sourceforge.net/
 
 
-Copyright (C) 2005   Michel Albert
-
-License:
+License
+=======
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

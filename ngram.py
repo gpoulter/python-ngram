@@ -178,9 +178,18 @@ class ngram:
             results[match] = similarity
       return results
 
+   def best_match(self, needle, count=1):
+      """Returns the best matches for the given string
+
+      @param needle: The string to search for.
+      @param count: How many results to return.
+      @return: Top-ranking strings paired with match score, in decreasing order of score.
+      """
+      return sorted(self.similar_strings(needle).iteritems(), key=lambda x:x[1], reverse=True)[:count]
+      
    @staticmethod
    def ngram_similarity_score(samegrams, allgrams, warp=1):
-      """Computes the similarity between two sets of n-grams.
+      """Static method computes the similarity between two sets of n-grams.
       
       Uses the following formula, where a is "all n-grams", d is "different
       n-grams" and e is the warp: (a**e - d**e)/a**e
@@ -199,21 +208,11 @@ class ngram:
          similarity = ((allgrams**warp) - (diffgrams**warp)) / (allgrams**warp)
       return similarity
 
-   def best_match(self, needle, count=1):
-      """Returns the best matches for the given string
-
-      @param needle: The string to search for.
-      @param count: How many results to return.
-      @return: Top-ranking strings paired with match score, in decreasing order of score.
-      """
-      return sorted(self.similar_strings(needle).iteritems(), key=lambda x:x[1], reverse=True)[:count]
+   @staticmethod
+   def compare(s1, s2):
+      """Static method compares two strings and returns the similarity score, e.g.
       
-   @classmethod
-   def compare(self, s1, s2):
-      """Compares two strings and returns the similarity score.
-
-      This is a class method. It can be called without instantiating the ngram
-      class first, e.g. ngram.compare('sfewefsf', 'sdfafwgah')
+      ngram.compare('sfewefsf', 'sdfafwgah')
 
       @param s1: First string
       @param s2: Second string
