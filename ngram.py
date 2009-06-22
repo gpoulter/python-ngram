@@ -10,22 +10,19 @@ The string-comparison algorithm is based from String::Trigram by Tarek Ahmed:
 @author: Graham Poulter 
 
 Based on "python-ngram" by Michel Albert, and rewritten by Graham Poulter:
- - Generalised the code to index any hashable object. The
-   "item_transform" function creates a string from the object for the purpose
-   of N-gram indexing. You are no longer limited to indexing and retrieving 
-   strings only.
- - Added API documentation in the form of Epydoc docstrings.
- - Refactored the functional decomposition.
- - Replaced several constructor options with a generic "transform" function.
- - Python 2.x updates: e.g. "x in d" instead of "d.has_key(x)", d.setdefault
-   instead of conditionals.
- - Identifiers to conform to PEP 8 (style guide), also changed terminology
-   to imply indexing of any "item" object, not just strings.
- - Reduced memory usage by eliminating the innermost level of 
-   dictionaries. Now storing just the number of shared grams at the lowest 
-   level.
- - Made the class inherit from set, since it is effectively a set of items,
-   with NGram search capability.
+ 
+ 1. Reduced memory usage by eliminating the innermost level of dictionaries.
+ This stores just the number of shared grams at the lowest level.
+
+ 2. Rewritten using a new functional decomposition, Python 2.4+ idioms, PEP 8
+ naming conventions, and Epydoc API documentation.
+
+ 3. Generalised the code to index any hashable object by means of a str_item
+ function to generate an appropriate string from the item NGram indexing. No
+ longer limited to indexing and retrieving strings.
+
+ 4. Rewritten again as a subclass the of built-in set, after realising that it
+ is really a set of items extended with NGram search capabilities.
 """
 
 __version__ = (4,0,0)
@@ -42,8 +39,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 """
 
-   
-class NGram:
+import copy
+
+class NGram(set):
    """Retrieve items by their N-Gram string similarity to the query.  Behaves
    like a set of items, except for the ability to retrieve them by similarity.
    
@@ -51,30 +49,34 @@ class NGram:
    byte strings (str), the data is split into bytes, while with unicode
    strings (unicode) the data is split into characters.
 
+   @note: Implements set update operations. Copy-creating set operations
+   (union, intersection, difference, symmetric_difference) return instances of
+   the built-in set. Use the NGram.copy operation to index
+   a built-in set as an NGram instance of the desired parametrisation.
+
    @ivar grams: Dictionary from n-gram to collection of items whose string 
    encoding contains the n-gram. Each collection is a dictionary from item 
    containing the n-gram,  to the number of times the n-gram occurs in 
    the string encoding of the item.
-
-   @ivar _seen: Set items that have been indexed.
    
-   @ivar _length: Dictionary from original strings (the keys of grams['xyz'])
-   to length of the corresponding padded string.
+   @ivar _length: Dictionary from items (the keys of each dictionary in grams)
+   to length of the corresponding transformed and padded string.
 
    @ivar _padding: Padding string added before and after the main string.
    """
    
 
-   def __init__(self, items=[], threshold=0.0, warp=1.0, item_transform=lambda x:x,
-                N=3, pad_len=None, pad_char='$', query_transform=None):
+   def __init__(self, items=[], threshold=0.0, warp=1.0, str_item=lambda x:x,
+                N=3, pad_len=None, pad_char='$', str_query=None):
       """Constructor
       
       @param threshold: Minimum similarity (between 0 and 1) for a string to be
       considered a match.
    
       @param warp: Use warp greater than 1.0 (but less than 3.0) to increase
-      the similarity for short strings. 0.0 < warp < 1. 0 reduces the
-      similarity of short strings relative to long ones, which is useless.
+      the similarity assigned to short string pairs to imrpove recall. 0.0 <
+      warp < 1. 0 is disallowed, because it reduces the similarity of short
+      strings relative to long strings, which is not what you want (trust me).
 
       @param items: Iteration of items to index for N-gram search.
 
@@ -87,70 +89,80 @@ class NGram:
       readability. If '$' occurs in the strings, try using the rare
       non-breaking space character, u'\0xa', instead.
       
-      @param item_transform: How to turn items into strings for indexing.
-      For example,  lambda x: re.sub(r"[^a-z0-9]+", "", x) indexes only 
-      alphanumeric characters for a string item and lambda x:string.lower(x[1]) 
-      case-insensitive indexes the second member of a tuple item.
+      @param str_item: Function to convert items into strings, defaulting to
+      lambda x:x. For example, lambda x: re.sub(r"[^a-z0-9]+", "", x) will index
+      only alphanumeric characters for a string item and lambda
+      x:string.lower(x[1]) case-insensitive indexes the second member of a
+      tuple item.
       
-      @param query_transform: How to turn query items into strings. The
-      default value of None indicates that the item_transform function should
-      be used.
+      @param str_query: Function to convert query items into strings. Default
+      of None indicates that str_item should be used. Set to lambda x:x for
+      example if the items are tuples but you wish to query by string.
       """
       assert 0 <= threshold <= 1
-      assert warp >= 0
-      assert hasattr(item_transform, "__call__")
+      assert 1.0 <= warp <= 3.0
+      assert hasattr(str_item, "__call__")
       assert N >= 1
       assert pad_len is None or 0 <= pad_len < N
       assert len(pad_char) == 1
-      assert query_transform is None or hasattr(query_transform, "__call__")
+      assert str_query is None or hasattr(str_query, "__call__")
       self.threshold = threshold
       self.warp = warp
-      self._item_transform = item_transform
       self._N = N
-      pad_len = pad_len or self._N-1
-      self._padding = pad_char * pad_len # derive padding string
-      self._query_transform = query_transform or item_transform
-      self._seen = set()
+      self._pad_len = pad_len
+      self._pad_char = pad_char
+      self._padding = pad_char * (pad_len or N-1) # derive padding string
+      self._str_item = str_item
+      self._str_query = str_query or str_item
       self._grams = {}
       self._length = {}
       self.update(items)
       
-   def __contains__(self, item):
-      """Whether this item has been indexed"""
-      return item in self._seen
-
-   def item_encode(self, item):
-      """Encode the item for indexing by transforming it to a string and padding."""
-      return self._padding + self._item_transform(item) + self._padding
+   def copy(self, items=None):
+      """Epensive copy of NGram instance: reindexes everything. Although
+      referencing the same items (shallow copy of items). 
+      @param items: Index these items instead of those in the original.
+      """
+      items = items or self # Index different items if provided
+      return NGram(items, self.threshold, self.warp, self._str_item,
+               self._N, self._pad_len, self._pad_char, self._str_query)
    
-   def query_encode(self, query):
-      """Encode the query item for search by transforming it and padding the result."""
-      return self._padding + self._query_transform(query) + self._padding
-   
-   def split(self, string):
-      """Iterate over the ngrams in the string."""
+   def pad(self, string):
+      """Pad a string in preparation for splitting into ngrams."""
+      return self._padding + string + self._padding
+         
+   def ngrams(self, string):
+      """Iterate over the ngrams of a string.  No padding is performed."""
       for i in range(len(string) - self._N + 1):
          yield string[i:i+self._N]
+         
+   def ngrams_pad(self, string):
+      """Iterate over ngrams of a string, padding the string before processing."""
+      return self.ngrams(self.pad(string))
 
    def add(self, item):
-      """Add an item to the N-gram index"""
-      # Record the length of the padded string for future reference
-      encoded_item = self.item_encode(item)
-      self._length[item] = len(encoded_item)
+      """Add an item to the N-gram index (only if it has not already been added)."""
       if item not in self:
-         self._seen.add(item)
-         for ngram in self.split(encoded_item):
+         # Add the item to the base set
+         super(NGram, self).add(item)
+         # Record length of padded string
+         padded_item = self.pad(self._str_item(item))
+         self._length[item] = len(padded_item)
+         for ngram in self.ngrams(padded_item):
             # Add a new n-gram and string to index if necessary
             self._grams.setdefault(ngram, {}).setdefault(item, 0)
             # Increment number of times the n-gram appears in the string
             self._grams[ngram][item] += 1
-         
-   def update(self, items):
-      """Add items to the N-gram index."""
-      for item in items:
-         self.add(item)
 
-   def candidates(self, query):
+   def remove(self, item):
+      """Remove an item from the index. Inverts the add operation."""
+      if item in self:
+         super(NGram, self).remove(item)
+         del self._length[item]
+         for ngram in self.ngrams_pad(self._str_item(item)):
+            del self._grams[ngram][item]
+         
+   def items_sharing_ngrams(self, query):
       """Retrieve the subset of items that share n-grams the query item.
    
       @param query: Query item, for which indexed items that share N-grams
@@ -163,7 +175,7 @@ class NGram:
       # Dictionary mapping n-gram to string to number of occurrences of that 
       # ngram in the string that remain to be matched.
       remaining = {}
-      for ngram in self.split(self.query_encode(query)):
+      for ngram in self.ngrams_pad(self._str_query(query)):
          try:
             for match, count in self._grams[ngram].items():
                remaining.setdefault(ngram, {}).setdefault(match, count)
@@ -176,39 +188,35 @@ class NGram:
             pass
       return shared
 
-   def candidate_similarities(self, query, candidates):
-      """Evaluate similarity of query item to candidate items.
+   def search(self, query):
+      """Get items from the index that share some N-grams with the
+      query and meet the similaroty threshold.
       
       @param query: Item to match against the candidate items.
 
-      @param candidates: Mapping from items to the number of N-grams that they
+      @param items_sharing_ngrams: Mapping from items to the number of N-grams that they
       share with the query item.
       
-      @return: Mapping from candidates to similarity, for candidates above the
-      similarity threshold.
+      @return: Mapping from items_sharing_ngrams to similarity, but
+      only for matches above the similarity threshold. {'abc': 1.0, 'abcd': 0.8}
       """
       results = {}
-      for match, samegrams in candidates.items():
-         allgrams = len(self.query_encode(query)) + self._length[match] - 2 * self._N - samegrams + 2
+      for match, samegrams in self.items_sharing_ngrams(query).items():
+         allgrams = (len(self.pad(self._str_query(query))) 
+                     + self._length[match] - (2 * self._N) - samegrams + 2)
          similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
-         if similarity > self.threshold:
+         if similarity >= self.threshold:
             results[match] = similarity
       return results
 
-   def similar_items(self, query):
-      """Get similar items to the query item.
-      @return: Mapping from matched items to similarity {'abc': 1.0, 'abcd': 0.8}
-      """
-      return self.candidate_similarities(query, self.candidates(query))
-
    def best_matches(self, query, count=None):
-      """Returns the best matches for the given item.
+      """Obtain a limited number of (item,similarity) result pairs.
 
-      @param query: The item to search for.
+      @param query: Search query.
       @param count: Maximum number of results to return.  None to return all results.
       @return: List of pairs of (item,similarity) by decreasing similarity.
       """
-      results = sorted(self.similar_items(query).items(), key=lambda x:x[1], reverse=True)
+      results = sorted(self.search(query).items(), key=lambda x:x[1], reverse=True)
       if count is not None:
          results = results[:count]
       return results
@@ -233,9 +241,9 @@ class NGram:
 
    @staticmethod
    def compare(s1, s2, **kwargs):
-      """Static method compares two strings directly and return the similarity.
-      For example, ngram.compare('sfewefsf', 'sdfafwgah').  Passes additional
-      keyword arguments to the ngram constructor.
+      """Compares two strings and return their similarity.  For example, 
+      ngram.compare('sfewefsf', 'sdfafwgah').  Additional keyword arguments
+      passed to __init__.
 
       @param s1: First string
       @param s2: Second string
@@ -246,6 +254,35 @@ class NGram:
             return 1.0
          return 0.0
       try:
-         return NGram([s1], **kwargs).similar_items(s2)[s1]
+         return NGram([s1], **kwargs).search(s2)[s1]
       except KeyError:
          return 0.0
+
+   ### Reimplement updating set operations on top of NGram add/remove
+      
+   def update(self, items):
+      """Merge iteration of items into the index."""
+      for item in items:
+         self.add(item)
+            
+   def discard(self, item):
+      """Remove an element from a set if it is a member.
+      If the element is not a member, do nothing."""
+      if item in self:
+         self.remove(item)
+   
+   def difference_update(self, other):
+      """Remove all elements of another set from this set."""
+      for x in other:
+         self.discard(x)
+   
+   def intersection_update(self, other):
+      """Update a set with the intersection of itself and another."""
+      self.difference_update([x for x in self if x not in other])
+      
+   def symmetric_difference_update(self, other):
+      """Update a set with the symmetric difference of itself and another."""
+      intersection = self.intersection(other) # record intersection of sets
+      self.update(other) # add items present in other
+      self.difference_update(self, intersection) # remove items present in both
+         
