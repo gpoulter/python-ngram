@@ -74,8 +74,9 @@ class ngram:
       @param threshold: Minimum similarity (between 0 and 1) for a string to be
       considered a match.
    
-      @param warp: warp > 1 means short strings are getting away better, if
-      warp < 1 they are getting away worse.
+      @param warp: Use warp greater than 1.0 (but less than 3.0) to increase
+      the similarity for short strings. 0.0 < warp < 1. 0 reduces the
+      similarity of short strings relative to long ones, which is useless.
 
       @param items: Iteration of items to index for search.
 
@@ -187,14 +188,17 @@ class ngram:
       """
       return self.candidate_similarities(query, self.candidates(query))
 
-   def best_matches(self, query, count=1):
+   def best_matches(self, query, count=None):
       """Returns the best matches for the given item.
 
       @param query: The item to search for.
-      @param count: Maximum number of results to return.
+      @param count: Maximum number of results to return.  None to return all results.
       @return: List of pairs of (item,similarity) by decreasing similarity.
       """
-      return sorted(self.similar_items(query).items(), key=lambda x:x[1], reverse=True)[:count]
+      results = sorted(self.similar_items(query).items(), key=lambda x:x[1], reverse=True)
+      if count is not None:
+         results = results[:count]
+      return results
       
    @staticmethod
    def ngram_similarity(samegrams, allgrams, warp=1):
