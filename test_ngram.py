@@ -33,18 +33,18 @@ class NgramTests(unittest.TestCase):
         """Tests from the old __name__=="__main__" stanza of ngram.py to
         check that the logic hasn't changed while upgrading the code"""
 
-        haystack = ['sdafaf','asfwef','asdfawe','adfwe', 'askfjwehiuasdfji']
+        items = ['sdafaf','asfwef','asdfawe','adfwe', 'askfjwehiuasdfji']
         
-        tg = ngram(haystack, threshold=0.0)
+        tg = ngram(items)
 
         self.assertEqual(
-            tg.similar_strings('askfjwehiuasdfji'),
+            tg.similar_items('askfjwehiuasdfji'),
             {'adfwe': 0.041666666666666664,
              'asdfawe': 0.17391304347826086,
              'asfwef': 0.083333333333333329,
-             'askfjwehiuasdfji': 1.0} ) 
+             'askfjwehiuasdfji': 1.0} )
 
-        self.assertEqual(tg.best_match('afadfwe', 2),
+        self.assertEqual(tg.best_matches('afadfwe', 2),
                          [('adfwe', 0.59999999999999998), 
                           ('asdfawe', 0.20000000000000001)])
 
@@ -57,18 +57,21 @@ class NgramTests(unittest.TestCase):
         abcgrams = ['$$a', '$ab', 'abc', 'bc$', 'c$$']
         
         # Basic splitting into n-grams
-        self.assertEqual(list(ngram().split("abc")), abcgrams)
+        index = ngram()
+        self.assertEqual(list(index.split(index.encode("abc"))), abcgrams)
 
         # Test transforming to lowercase
-        self.assertEqual(list(ngram(transform=string.lower).split("AbC")), abcgrams)
+        index = ngram(transform=string.lower)
+        self.assertEqual(list(index.split(index.encode("AbC"))), abcgrams)
         
         # Demonstrate that multi-byte characters fall prey to the 1 char == 1 byte assumption
         # Note: utf-8 encoding of é is \xc3\xa9
-        self.assertEqual(list(ngram(pad_len=1).split('é')), ['$\xc3\xa9', '\xc3\xa9$'])
+        index = ngram(pad_len=1)
+        self.assertEqual(list(index.split(index.encode('é'))), ['$\xc3\xa9', '\xc3\xa9$'])
         
         # Unicode strings don't have this problem.
         # Note: unicode character for é is \xe9
-        self.assertEqual(list(ngram(pad_len=1).split(u'é')), [u'$\xe9$'])
+        self.assertEqual(list(index.split(index.encode(u'é'))), [u'$\xe9$'])
 
 
 if __name__ == "__main__":

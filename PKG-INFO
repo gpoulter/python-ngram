@@ -1,10 +1,11 @@
 Metadata-Version: 1.0
 Name: ngram
-Version: 2.0.0b2
-Summary: A module inspired by String::Trigram (Perl) to get a similarity between two strings
-Home-page: http://exhuma.wicked.lu/projects/python-ngram
-Author: Michel Albert
-Author-email: exhuma@users.sourceforge.net
+Version: 2.1
+Summary: A module to calculate the similarity of a pair of strings, and to look up similar strings in a dictionary-like structure. Inspired by Perl's String::Trigram.
+Home-page: http://www.sourceforge.net/projects/python-ngram
+Author: Michael Albert, Graham Poulter
+Author-email: skygreen@users.sourceforge.net
 License: LGPL
 Description: UNKNOWN
+Keywords: ngram string similarity
 Platform: UNKNOWN
