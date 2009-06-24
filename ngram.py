@@ -201,30 +201,20 @@ class NGram(set):
       @param items_sharing_ngrams: Mapping from items to the number of N-grams that they
       share with the query item.
       
-      @return: Mapping from items_sharing_ngrams to similarity, but
-      only for matches above the similarity threshold. {'abc': 1.0, 'abcd': 0.8}
+      @return: List of pairs of (item,similarity) by decreasing similarity.
       """
-      results = {}
+      results = []
+      # Identify possible results
       for match, samegrams in self.items_sharing_ngrams(query).iteritems():
          allgrams = (len(self.pad(self._str_query(query))) 
                      + self._length[match] - (2 * self._N) - samegrams + 2)
          similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
          if similarity >= self.threshold:
-            results[match] = similarity
+            results.append((match, similarity))
+      # Sort results by decreasing similarity
+      results.sort(key=lambda x:x[1], reverse=True)
       return results
 
-   def best_matches(self, query, count=None):
-      """Obtain a limited number of (item,similarity) result pairs.
-
-      @param query: Search query.
-      @param count: Maximum number of results to return.  None to return all results.
-      @return: List of pairs of (item,similarity) by decreasing similarity.
-      """
-      results = sorted(self.search(query).iteritems(), key=lambda x:x[1], reverse=True)
-      if count is not None:
-         results = results[:count]
-      return results
-      
    @staticmethod
    def ngram_similarity(samegrams, allgrams, warp=1):
       """Static method computes the similarity between two sets of n-grams.
@@ -258,8 +248,8 @@ class NGram(set):
             return 1.0
          return 0.0
       try:
-         return NGram([s1], **kwargs).search(s2)[s1]
-      except KeyError:
+         return NGram([s1], **kwargs).search(s2)[0][1]
+      except IndexError:
          return 0.0
 
    ### Reimplement updating set operations on top of NGram add/remove
