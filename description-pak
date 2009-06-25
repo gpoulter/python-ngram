@@ -1,1 +1,1 @@
-NGram is a Python collection of objects where the most similar object(s) to a query object are retrieved by NGram string similarity to the query.
+Provides NGram, a set class that can search its members by their N-Gram similarity to a query string

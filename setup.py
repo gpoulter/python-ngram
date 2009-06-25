@@ -15,6 +15,6 @@ setup(
     license='LGPL',
 
     url='http://www.sourceforge.net/projects/python-ngram',
-    description="A dictionary-like data structure to retrieve objects similar to a query object using N-Gram similarity",
+    description="A set class that can search its members by N-Gram similarity to a query string"
     keywords="ngram string similarity",
 )
