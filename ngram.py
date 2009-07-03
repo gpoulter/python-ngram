@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 A Python module implementing a set-like object which has facilities to
 retrieve similar objects from the set based on N-gram similarity
@@ -107,7 +108,9 @@ class NGram(set):
       assert 1.0 <= warp <= 3.0
       assert hasattr(str_item, "__call__")
       assert N >= 1
-      assert pad_len is None or 0 <= pad_len < N
+      if pad_len is None:
+         pad_len = N-1
+      assert 0 <= pad_len < N
       assert len(pad_char) == 1
       assert str_query is None or hasattr(str_query, "__call__")
       self.threshold = threshold
@@ -115,7 +118,7 @@ class NGram(set):
       self._N = N
       self._pad_len = pad_len
       self._pad_char = pad_char
-      self._padding = pad_char * (pad_len or N-1) # derive padding string
+      self._padding = pad_char * pad_len # derive a padding string
       self._str_item = str_item
       self._str_query = str_query or str_item
       self._grams = {}
@@ -280,3 +283,6 @@ class NGram(set):
       self.update(other) # add items present in other
       self.difference_update(self, intersection) # remove items present in both
          
+if __name__ == "__main__":
+   import sys
+   print NGram.compare(sys.argv[1], sys.argv[2])
