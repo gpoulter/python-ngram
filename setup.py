@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-#import ez_setup
-#ez_setup.use_setuptools()
+import ez_setup
+ez_setup.use_setuptools()
 from setuptools import setup
 
 setup(
@@ -15,6 +15,6 @@ setup(
     license='LGPL',
 
     url='http://www.sourceforge.net/projects/python-ngram',
-    description="A set class that can search its members by N-Gram similarity to a query string"
+    description="A set class that can search its members by N-Gram similarity to a query string",
     keywords="ngram string similarity",
 )
