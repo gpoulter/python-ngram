@@ -8,7 +8,7 @@ sudo checkinstall\
  --pkglicense=LGPL\
  --pkggroup=python\
  --pkgsource=http://pypi.python.org/pypi/ngram\
- --pkgaltsource=http://python-ngram.sourceforge.net\
+ --pkgaltsource=http://packages.python.org/ngram\
  --requires=python\
  --deldoc=yes\
  --backup=no\

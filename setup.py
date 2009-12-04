@@ -17,7 +17,7 @@ setup(
     zip_safe = True,
     author = 'Michael Albert, Graham Poulter',
     license = 'LGPL',
-    url = 'http://www.sourceforge.net/projects/python-ngram',
+    url = 'http://packages.python.org/ngram',
     description = "A set that retrieves members by N-Gram similarity to a query string.",
     keywords = "ngram string similarity",
 )
