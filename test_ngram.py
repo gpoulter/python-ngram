@@ -71,28 +71,5 @@ class NgramTests(unittest.TestCase):
         self.assertEqual(results(idx1.search('def')), ['cdefg'])
 
         
-    def test_unicode_string_splitting(self):
-        """Test the functions that split strings into ngrams"""
-        
-        abcgrams = ['$$a', '$ab', 'abc', 'bc$', 'c$$']
-        
-        # Basic splitting into n-grams
-        index = NGram()
-        self.assertEqual(list(index.ngrams(index.pad("abc"))), abcgrams)
-
-        # Transforming string to lowercase first.
-        index = NGram(str_item=string.lower)
-        self.assertEqual(list(index.ngrams(index.pad(index._str_item("AbC")))), abcgrams)
-        
-        # Strings ar split into bytes, not characters.
-        # For example, the utf-8 encoding of é (\xe9) is \xc3\xa9
-        index = NGram(pad_len=1,N=3)
-        self.assertEqual(list(index.ngrams_pad('é')), ['$\xc3\xa9', '\xc3\xa9$'])
-        
-        # Unicode strings split multi-byte characters correctly.
-        # Fox example, the unicode character for é is \xe9
-        self.assertEqual(list(index.ngrams_pad(u'é')), [u'$\xe9$'])
-
-
 if __name__ == "__main__":
     unittest.main()

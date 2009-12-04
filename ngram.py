@@ -52,11 +52,11 @@ class NGram(set):
    :param pad_char: character to use for padding.  Default is '$', but consider using the\
    non-breaking space character, ``u'\0xa'``.
    
-   :type str_item: function(item) -> str/unicode 
-   :param str_item: Function to convert items into string, default is no conversion.
+   :type iconv: function(item) -> str/unicode 
+   :param iconv: Function to convert items into string, default is no conversion.
  
-   :type str_query: function(query) -> str/unicode
-   :param str_query: Function to convert query into string, default is no conversion.
+   :type qconv: function(query) -> str/unicode
+   :param qconv: Function to convert query into string, default is no conversion.
 
    And some instance variables:
 
@@ -66,13 +66,11 @@ class NGram(set):
    
    :type length: {item:int,...}
    :ivar length: lengths of padded string representations of each item.
-
-   
    """
    
 
-   def __init__(self, items=[], threshold=0.0, warp=1.0, str_item=None,
-                N=3, pad_len=None, pad_char='$', str_query=None):
+   def __init__(self, items=[], threshold=0.0, warp=1.0, iconv=None,
+                N=3, pad_len=None, pad_char='$', qconv=None):
       super(set, self).__init__()
       if not (0 <= threshold <= 1):
          raise ValueError("Threshold %s outside 0.0 to 1.0 range" % threshold)
@@ -86,20 +84,20 @@ class NGram(set):
          raise ValueError("pad_len of %s is outside 0 to %d range" % (pad_len,N))
       if not (isinstance(pad_char,basestring) and len(pad_char)==1):
          raise ValueError("pad_char %s is not a single-character string." % pad_char)
-      if not (str_item is None or hasattr(str_item, "__call__")):
-         raise ValueError("str_item %s is not a function." % pad_char)
-      if not (str_query is None or hasattr(str_query, "__call__")):
-         raise ValueError("str_query %s is not a function." % pad_char)
+      if not (iconv is None or hasattr(iconv, "__call__")):
+         raise ValueError("iconv %s is not a function." % pad_char)
+      if not (qconv is None or hasattr(qconv, "__call__")):
+         raise ValueError("qconv %s is not a function." % pad_char)
       self.threshold = threshold
       self.warp = warp
-      self._N = N
+      self.N = N
       self._pad_len = pad_len
       self._pad_char = pad_char
       self._padding = pad_char * pad_len # derive a padding string
       def identity(x):
          return x
-      self._str_item = str_item or identity
-      self._str_query = str_query or identity
+      self.iconv = iconv or identity
+      self.qconv = qconv or identity
       self._grams = {}
       self.length = {}
       self.update(items)
@@ -112,8 +110,8 @@ class NGram(set):
       :param items: Index these items instead of those in the original.
       """
       items = items or self # Index different items if provided
-      return NGram(items, self.threshold, self.warp, self._str_item,
-               self._N, self._pad_len, self._pad_char, self._str_query)
+      return NGram(items, self.threshold, self.warp, self.iconv,
+               self.N, self._pad_len, self._pad_char, self.qconv)
    
    def pad(self, string):
       """Pad a string in preparation for splitting into ngrams."""
@@ -121,8 +119,8 @@ class NGram(set):
          
    def ngrams(self, string):
       """Iterate over the ngrams of a string.  No padding is performed."""
-      for i in range(len(string) - self._N + 1):
-         yield string[i:i+self._N]
+      for i in range(len(string) - self.N + 1):
+         yield string[i:i+self.N]
          
    def ngrams_pad(self, string):
       """Iterate over ngrams of a string, padding the string before processing."""
@@ -134,7 +132,7 @@ class NGram(set):
          # Add the item to the base set
          super(NGram, self).add(item)
          # Record length of padded string
-         padded_item = self.pad(self._str_item(item))
+         padded_item = self.pad(self.iconv(item))
          self.length[item] = len(padded_item)
          for ngram in self.ngrams(padded_item):
             # Add a new n-gram and string to index if necessary
@@ -147,7 +145,7 @@ class NGram(set):
       if item in self:
          super(NGram, self).remove(item)
          del self.length[item]
-         for ngram in self.ngrams_pad(self._str_item(item)):
+         for ngram in self.ngrams_pad(self.iconv(item)):
             del self._grams[ngram][item]
          
    def items_sharing_ngrams(self, query):
@@ -161,7 +159,7 @@ class NGram(set):
       # Dictionary mapping n-gram to string to number of occurrences of that 
       # ngram in the string that remain to be matched.
       remaining = {}
-      for ngram in self.ngrams_pad(self._str_query(query)):
+      for ngram in self.ngrams_pad(self.qconv(query)):
          try:
             for match, count in self._grams[ngram].iteritems():
                remaining.setdefault(ngram, {}).setdefault(match, count)
@@ -185,8 +183,8 @@ class NGram(set):
       results = []
       # Identify possible results
       for match, samegrams in self.items_sharing_ngrams(query).iteritems():
-         allgrams = (len(self.pad(self._str_query(query))) 
-                     + self.length[match] - (2 * self._N) - samegrams + 2)
+         allgrams = (len(self.pad(self.qconv(query))) 
+                     + self.length[match] - (2 * self.N) - samegrams + 2)
          similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
          if similarity >= threshold:
             results.append((match, similarity))

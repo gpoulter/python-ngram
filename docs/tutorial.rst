@@ -33,10 +33,10 @@ For example, index the lower-case version of a string.
 
 .. doctest::
 
-   >>> G = ngram.NGram(str_item=lambda x:x.lower())
-   >>> G._str_item('AbC')
+   >>> G = ngram.NGram(iconv=lambda x:x.lower())
+   >>> G.iconv('AbC')
    'abc'
-   >>> G.pad(G._str_item('AbC'))
+   >>> G.pad(G.iconv('AbC'))
    '$$abc$$'
    >>> list(G.ngrams(_))
    ['$$a', '$ab', 'abc', 'bc$', 'c$$']
@@ -48,7 +48,7 @@ For example, index the lower-case version of a string.
    []
    >>> # now lower-case both the items and the queries
    >>> lower = lambda x: x.lower()
-   >>> G = ngram.NGram(str_item=lower, str_query=lower)
+   >>> G = ngram.NGram(iconv=lower, qconv=lower)
    >>> G.add('AbC')
    >>> G.search('AbCD')
    [('AbC', 0.375)]
@@ -58,7 +58,7 @@ representation.
 
 .. doctest::
 
-   >>> G = ngram.NGram(str_item=lambda x:(" ".join(x)).lower())
+   >>> G = ngram.NGram(iconv=lambda x:(" ".join(x)).lower())
    >>> G.add(("Joe","Bloggs"))
    >>> G.search("jeo blogger")
    [(('Joe', 'Bloggs'), 0.25)]
