@@ -11,6 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+.. automodule:: ngram
+   :members:
+
 Indices and tables
 ==================
 
