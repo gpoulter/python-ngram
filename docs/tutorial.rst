@@ -36,7 +36,7 @@ For example, index the lower-case version of a string.
    >>> G = ngram.NGram(iconv=lambda x:x.lower())
    >>> G.iconv('AbC')
    'abc'
-   >>> G.pad(G.iconv('AbC'))
+   >>> G.pad(_)
    '$$abc$$'
    >>> list(G.ngrams(_))
    ['$$a', '$ab', 'abc', 'bc$', 'c$$']
