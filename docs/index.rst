@@ -10,6 +10,9 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   
+   tutorial
+   ngram
 
 Introduction
 ============
@@ -82,10 +85,6 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  
 USA.
-
-
-.. automodule:: ngram
-   :members:
 
 Indices and tables
 ==================

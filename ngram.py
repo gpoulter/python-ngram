@@ -66,6 +66,8 @@ class NGram(set):
    
    :type length: {item:int,...}
    :ivar length: lengths of padded string representations of each item.
+
+   
    """
    
 
@@ -203,6 +205,7 @@ class NGram(set):
       :param allgrams: total number ofn-grams in both strings.
       :return: similarity in the range 0.0 to 1.0.
 
+      >>> from ngram import NGram
       >>> NGram.ngram_similarity(5,10)
       0.5
       >>> NGram.ngram_similarity(5,10,warp=2)
@@ -230,11 +233,14 @@ class NGram(set):
       :param kwargs: additional keyword arguments passed to __init__.
       :return: similarity between 0.0 and 1.0.
 
+      >>> from ngram import NGram
       >>> NGram.compare('foo', 'foobar')
       0.29999999999999999
       >>> NGram.compare('foo', 'boo')
       0.25
-      >>> NGram.compare('foo', 'boo', N=1)
+      >>> NGram.compare('abcd', 'bcd') #N=2
+      0.375
+      >>> NGram.compare('abc', 'bcd', N=1)
       0.5
       """
       if s1 is None or s2 is None:
