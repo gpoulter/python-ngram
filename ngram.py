@@ -2,14 +2,11 @@
 :mod:`ngram` -- Provides a set that supports lookup by string similarity
 ========================================================================
 
-.. moduleauthor:: Michel Albert (to version 2)
-.. moduleauthor:: Graham Poulter (version 3+)
-
+.. moduleauthor:: Graham Poulter (version 3.0+)
+.. moduleauthor:: Michel Albert (version 2.0.0b2)
 """
 
 from __future__ import division
-
-__version__ = (3, 0, 0)
 
 __license__ = """
 This library is free software; you can redistribute it and/or

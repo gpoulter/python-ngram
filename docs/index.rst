@@ -17,20 +17,24 @@ Contents:
 Introduction
 ============
 
-The NGram class is a set that supports searching for its members by
-N-Gram string similarity. It is a full subclass of the built-in `set`
-that maintains N-Gram indexing on all set operations. The algorithm is
-based from `String::Trigram
+The :class:`~ngram.NGram` class is a set that supports searching for
+its members by N-Gram string similarity. It is a full subclass of the
+built-in `set` that maintains N-Gram indexing on all set
+operations. The algorithm is based from `String::Trigram
 <http://search.cpan.org/dist/String-Trigram/>`_ by Tarek Ahmed.
 
 NGram up to version 2.0.0b2 was written by Michel Albert, and since
 then has had a major rewrite and been maintained by Graham Poulter:
 see `Changes in Version 3`_
 
+NGram is hosted at the `Python Package Index
+<http://pypi.python.org/pypi/ngram>`_, and this is the online
+documentation.
+
 Installation
 ============
 
-Simplest is to install from `PyPI <http://packages.python.org/ngram>`_::
+Simple way is to install from `PyPI <http://pypi.python.org/pypi/ngram>`_::
 
    easy_install ngram
 

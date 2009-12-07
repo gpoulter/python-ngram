@@ -2,13 +2,14 @@
 """Set that retrieves members by N-Gram similarity to a query string.
 
 The NGram class is a set that supports searching for its members by
-N-Gram string similarity.
-
-It is a full subclass of the built-in `set` that maintains N-Gram
-indexing on all set operations.
-
-The algorithm is based from `String::Trigram
+N-Gram string similarity. It is a full subclass of the built-in `set`
+that maintains N-Gram indexing on all set operations. The algorithm is
+based from `String::Trigram
 <http://search.cpan.org/dist/String-Trigram/>`_ by Tarek Ahmed.
+
+Here is the `documentation home page
+<http://packages.python.org/ngram/>`_ and the `tutorial
+<http://packages.python.org/ngram/tutorial.html>`_.
 """
 
 try:
@@ -31,12 +32,12 @@ extra['classifiers'] = [c.strip() for c in """
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
 License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+Topic :: Text Processing :: Linguistic
+Operating System :: OS Independent
 Programming Language :: Python :: 2
 Programming Language :: Python :: 2.6
 Programming Language :: Python :: 3
 Programming Language :: Python :: 3.1
-Topic :: Text Processing :: Linguistic
-Operating System :: OS Independent
 """.split('\n') if c.strip()]
 
 doclines = __doc__.split("\n")
