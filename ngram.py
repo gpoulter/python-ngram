@@ -30,20 +30,20 @@ class NGram(set):
    multiple bytes per character.  You must provide NGram with unicode strings if
    the encoding would have multi-byte characters.
 
-   :type threshold: float between 0.0 and 1.0
+   :type threshold: float in 0.0 ... 1.0
    :param threshold: minimum similarity for a string to be considered a match.
 
-   :type warp: float, 1.0 <= warp <= 3.0
+   :type warp: float in 1.0 ... 3.0
    :param warp: use warp greater than 1.0 to increase the similarity of shorter string pairs.
 
-   :type items: [item,...]
+   :type items: [item, ...]
    :param items: iteration of items to index for N-gram search.
 
-   :type N: int, N >= 2
+   :type N: int >= 2
    :param N: number of characters per n-gram
    
-   :type pad_len: int, 0 <= pad_len <= N-1
-   :param pad_len: how many characters padding to add (default N-1)
+   :type pad_len: int in 0 ... N-1
+   :param pad_len: how many characters padding to add (defaults to N-1)
    
    :type pad_char: str or unicode
    :param pad_char: character to use for padding.  Default is '$', but consider using the\
@@ -55,14 +55,12 @@ class NGram(set):
    :type qconv: function(query) -> str/unicode
    :param qconv: Function to convert query into string, default is no conversion.
 
-   And some instance variables:
+   Instance variables:
 
-   :type grams: {ngram:{item:int,...},...],...}
-   :ivar grams: For each n-gram, the items containing it and the number of times\
-   the n-gram occurs in the item.
+   :ivar _grams: For each n-gram, the items containing it and the number of times\
+   the n-gram occurs in the item as ``{str:{item:int, ...}, ...}``
    
-   :type length: {item:int,...}
-   :ivar length: lengths of padded string representations of each item.
+   :ivar length: maps items to length of the padded string representations as ``{item:int, ...}``
    """
    
 
@@ -196,8 +194,8 @@ class NGram(set):
       :note: ``similarity = (a**e - d**e)/a**e`` where `a` is "all n-grams", 
       `d` is "different n-grams" and `e` is the warp.
 
-      :param samegrams: number of n-grams that were found in both strings.
-      :param allgrams: total number ofn-grams in both strings.
+      :param samegrams: number of n-grams shared by the two strings.
+      :param allgrams: total of the distinct n-grams across the two strings.
       :return: similarity in the range 0.0 to 1.0.
 
       >>> from ngram import NGram
