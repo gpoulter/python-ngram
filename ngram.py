@@ -71,7 +71,7 @@ class NGram(set):
 
    def __init__(self, items=[], threshold=0.0, warp=1.0, iconv=None,
                 N=3, pad_len=None, pad_char='$', qconv=None):
-      super(set, self).__init__()
+      super(NGram, self).__init__()
       if not (0 <= threshold <= 1):
          raise ValueError("Threshold %s outside 0.0 to 1.0 range" % threshold)
       if not(1.0 <= warp <= 3.0):
