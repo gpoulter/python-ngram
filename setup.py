@@ -31,7 +31,10 @@ extra['classifiers'] = [c.strip() for c in """
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
 License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
-Programming Language :: Python
+Programming Language :: Python :: 2
+Programming Language :: Python :: 2.6
+Programming Language :: Python :: 3
+Programming Language :: Python :: 3.1
 Topic :: Text Processing :: Linguistic
 Operating System :: OS Independent
 """.split('\n') if c.strip()]

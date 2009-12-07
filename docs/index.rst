@@ -18,55 +18,49 @@ Introduction
 ============
 
 The NGram class is a set that supports searching for its members by
-N-Gram string similarity.
-
-It is a full subclass of the built-in `set` that maintains N-Gram
-indexing on all set operations.
-
-The algorithm is based from `String::Trigram
+N-Gram string similarity. It is a full subclass of the built-in `set`
+that maintains N-Gram indexing on all set operations. The algorithm is
+based from `String::Trigram
 <http://search.cpan.org/dist/String-Trigram/>`_ by Tarek Ahmed.
 
-NGram up to version 2.0.0b2 was written by Michel Alberst. Version 3
-is a major re-write and refactoring by Graham Poulter.  See `Changes
-in Version 3`_
+NGram up to version 2.0.0b2 was written by Michel Albert, and since
+then has had a major rewrite and been maintained by Graham Poulter:
+see `Changes in Version 3`_
 
 Installation
 ============
 
-From the source code::
-
-   python setup.py install --prefix=$HOME/.local
-
-From `ngram on PyPI <http://packages.python.org/ngram>`_::
+Simplest is to install from `PyPI <http://packages.python.org/ngram>`_::
 
    easy_install ngram
 
-Build documentation in `docs/_build/html`::
+Or download the source tarball from PyPI and install locally::
+
+   python setup.py install --prefix=$HOME/.local
+
+With source you can build documentation in `docs/_build/html`::
 
    python setup.py build_sphinx
-
-Python compatibility
-====================
-
-The :mod:`ngram` module is compatible with Python 2.6 and above, and a Python
-3.x version will be available as a 2to3 conversion.
-
-NGram has no dependencies and should run on any platform supported by
-Python 2.6
 
 Changes in Version 3
 ====================
 
-Fixes and additions in version 3:
- * Eliminated inner level of dictionaries to reduce memory usage.
- * Accepts any hashable, not just strings (function parameter for converting to string)
+Changes in version 3.1:
+ * NEW Support Python 3 via use_2to3 in setup.py
+ * NEW Tutorial and docs in Sphinx (http://packages.python.org/ngram)
+ * CHANGE Setuptools replaced by Distribute (for Python 3)
+ * CHANGE Docstrings in reStructuredText (for Sphinx)
+ * CHANGE str_item and str_query are now iconv and qconv
+ * FIX Integer division bug (e.g. arises when warp is 2 not 2.0)
 
-Breaking changes in version 3:
- * Re-written as subclass of built-in set object
- * Python 2.6 updates
- * PEP 8 method naming
- * Epydoc documenation in 3.0 (Sphinx documentation in 3.1)
- * New functional decomposition (refactored methods)
+Changes in version 3.0:
+ * NEW Accepts any hashable item (no longer limited to strings)
+ * NEW Re-written as subclass of `set`
+ * NEW Docstrings added, using Epydoc API doc generator
+ * CHANGE Revised to use Python 2.6 idioms (losing Python 2.2 compatibilit)
+ * CHANGE Renamed things to follow PEP 8
+ * CHANGE Refactored the NGram class (new method decomposition)
+ * FIX Eliminated innermost level of dictionaries, reducing memory usage.
 
 License
 =======
@@ -86,10 +80,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  
 USA.
 
+:download:`License Text <../LICENSE>`
+
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
