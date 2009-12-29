@@ -12,6 +12,7 @@ Here is the `documentation home page
 <http://packages.python.org/ngram/tutorial.html>`_.
 """
 
+import sys
 try:
     from setuptools import setup
 except ImportError:
@@ -22,13 +23,8 @@ except ImportError:
     except ImportError:
         from distutils.core import setup
 
-extra = {}
-import sys
-if sys.version_info >= (3,):
-    extra['use_2to3'] = True
-    extra['convert_2to3_doctests'] = ['doc/tutorial.rst']
 
-extra['classifiers'] = [c.strip() for c in """
+classifiers = """
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
 License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
@@ -38,11 +34,19 @@ Programming Language :: Python :: 2
 Programming Language :: Python :: 2.6
 Programming Language :: Python :: 3
 Programming Language :: Python :: 3.1
-""".split('\n') if c.strip()]
+"""
 
-doclines = __doc__.split("\n")
-extra['description'] = doclines[0]
-extra['long_description'] = "\n".join(doclines[2:])
+params = dict(
+    description = __doc__.split("\n")[0],
+    long_description = "\n".join(__doc__.split("\n")[2:]),
+    classifiers = [c.strip() for c in classifiers.split('\n') if c.strip()],
+)
+
+if sys.version_info >= (3,):
+    params.update(
+        use_2to3 = True,
+        convert_2to3_doctests = ['doc/tutorial.rst'],
+    )
 
 setup(
     name = 'ngram',
@@ -51,11 +55,12 @@ setup(
     zip_safe = True,
     author = 'Graham Poulter, Michael Albert',
     maintainer = 'Graham Poulter',
+    author_email = 'http://www.grahampoulter.com',
     license = 'http://www.gnu.org/copyleft/lesser.html',
     url = 'http://packages.python.org/ngram',
     download_url = 'http://pypi.python.org/pypi/ngram',
     keywords = "ngram string similarity",
     test_suite = 'test_ngram',
     platforms = ['any'],
-    **extra
+    **params
 )
