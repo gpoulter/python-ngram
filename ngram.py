@@ -49,8 +49,8 @@ class NGram(set):
    :param pad_char: character to use for padding.  Default is '$', but consider using the\
    non-breaking space character, ``u'\0xa'``.
    
-   :type iconv: function(item) -> str/unicode 
-   :param iconv: Function to convert items into string, default is no conversion.
+   :type key: function(item) -> str/unicode 
+   :param key: Function to convert items into string, default is no conversion.
  
    :type qconv: function(query) -> str/unicode
    :param qconv: Function to convert query into string, default is no conversion.
@@ -64,7 +64,7 @@ class NGram(set):
    """
    
 
-   def __init__(self, items=[], threshold=0.0, warp=1.0, iconv=None,
+   def __init__(self, items=[], threshold=0.0, warp=1.0, key=None,
                 N=3, pad_len=None, pad_char='$', qconv=None):
       super(NGram, self).__init__()
       if not (0 <= threshold <= 1):
@@ -79,8 +79,8 @@ class NGram(set):
          raise ValueError("pad_len of %s is outside 0 to %d range" % (pad_len,N))
       if not (isinstance(pad_char,basestring) and len(pad_char)==1):
          raise ValueError("pad_char %s is not a single-character string." % pad_char)
-      if not (iconv is None or hasattr(iconv, "__call__")):
-         raise ValueError("iconv %s is not a function." % pad_char)
+      if not (key is None or hasattr(key, "__call__")):
+         raise ValueError("key %s is not a function." % pad_char)
       if not (qconv is None or hasattr(qconv, "__call__")):
          raise ValueError("qconv %s is not a function." % pad_char)
       self.threshold = threshold
@@ -91,7 +91,7 @@ class NGram(set):
       self._padding = pad_char * pad_len # derive a padding string
       def identity(x):
          return x
-      self.iconv = iconv or identity
+      self.key = key or identity
       self.qconv = qconv or identity
       self._grams = {}
       self.length = {}
@@ -105,7 +105,7 @@ class NGram(set):
       :param items: Index these items instead of those in the original.
       """
       items = items or self # Index different items if provided
-      return NGram(items, self.threshold, self.warp, self.iconv,
+      return NGram(items, self.threshold, self.warp, self.key,
                self.N, self._pad_len, self._pad_char, self.qconv)
    
    def pad(self, string):
@@ -127,7 +127,7 @@ class NGram(set):
          # Add the item to the base set
          super(NGram, self).add(item)
          # Record length of padded string
-         padded_item = self.pad(self.iconv(item))
+         padded_item = self.pad(self.key(item))
          self.length[item] = len(padded_item)
          for ngram in self.ngrams(padded_item):
             # Add a new n-gram and string to index if necessary
@@ -140,7 +140,7 @@ class NGram(set):
       if item in self:
          super(NGram, self).remove(item)
          del self.length[item]
-         for ngram in self.ngrams_pad(self.iconv(item)):
+         for ngram in self.ngrams_pad(self.key(item)):
             del self._grams[ngram][item]
          
    def items_sharing_ngrams(self, query):
