@@ -52,9 +52,6 @@ class NGram(set):
    :type key: function(item) -> str/unicode 
    :param key: Function to convert items into string, default is no conversion.
  
-   :type qconv: function(query) -> str/unicode
-   :param qconv: Function to convert query into string, default is no conversion.
-
    Instance variables:
 
    :ivar _grams: For each n-gram, the items containing it and the number of times\
@@ -65,7 +62,7 @@ class NGram(set):
    
 
    def __init__(self, items=[], threshold=0.0, warp=1.0, key=None,
-                N=3, pad_len=None, pad_char='$', qconv=None):
+                N=3, pad_len=None, pad_char='$'):
       super(NGram, self).__init__()
       if not (0 <= threshold <= 1):
          raise ValueError("Threshold %s outside 0.0 to 1.0 range" % threshold)
@@ -81,8 +78,6 @@ class NGram(set):
          raise ValueError("pad_char %s is not a single-character string." % pad_char)
       if not (key is None or hasattr(key, "__call__")):
          raise ValueError("key %s is not a function." % pad_char)
-      if not (qconv is None or hasattr(qconv, "__call__")):
-         raise ValueError("qconv %s is not a function." % pad_char)
       self.threshold = threshold
       self.warp = warp
       self.N = N
@@ -92,7 +87,6 @@ class NGram(set):
       def identity(x):
          return x
       self.key = key or identity
-      self.qconv = qconv or identity
       self._grams = {}
       self.length = {}
       self.update(items)
@@ -106,7 +100,7 @@ class NGram(set):
       """
       items = items or self # Index different items if provided
       return NGram(items, self.threshold, self.warp, self.key,
-               self.N, self._pad_len, self._pad_char, self.qconv)
+               self.N, self._pad_len, self._pad_char)
    
    def pad(self, string):
       """Pad a string in preparation for splitting into ngrams."""
@@ -144,9 +138,9 @@ class NGram(set):
             del self._grams[ngram][item]
          
    def items_sharing_ngrams(self, query):
-      """Retrieve the subset of items that share n-grams the query item.
+      """Retrieve the subset of items that share n-grams the query string.
    
-      :param query: look up items that share N-grams with the `query`.
+      :param query: look up items that share N-grams with this string. 
       :return: dictionary from matched string to the number of shared N-grams.
       """
       # From matched string to number of N-grams shared with query string
@@ -154,7 +148,7 @@ class NGram(set):
       # Dictionary mapping n-gram to string to number of occurrences of that 
       # ngram in the string that remain to be matched.
       remaining = {}
-      for ngram in self.ngrams_pad(self.qconv(query)):
+      for ngram in self.ngrams_pad(query):
          try:
             for match, count in self._grams[ngram].iteritems():
                remaining.setdefault(ngram, {}).setdefault(match, count)
@@ -167,18 +161,29 @@ class NGram(set):
             pass
       return shared
 
-   def search(self, query, threshold=None):
+   def search(self, query, usekey=False, threshold=None):
       """Search the index for items that have similarity to the query.
       
       :param query: returned items will have at least `threshold` similarity to the query.
+      :param usekey: Use the `key` specified in the constructor to transform the query into a string.
       :param threshold: override the threshold specified in the constructor.
       :return: list of pairs of (item,similarity) by decreasing similarity.
+
+      >>> from ngram import NGram
+      >>> n = NGram([(0,"Josef"),(1,"Joseph"),(2,"Jo")], key=lambda x:x[1])
+      >>> n.search("osef")
+      [((0, 'Josef'), 0.44444444444444442), ((1, 'Joseph'), 0.076923076923076927)]
+      >>> n.search((3,"osef"), usekey=True)
+      [((0, 'Josef'), 0.44444444444444442), ((1, 'Joseph'), 0.076923076923076927)]
+      >>> n.search("Jo", threshold=0.25)
+      [((2, 'Jo'), 1.0)]
       """
       threshold = threshold if threshold is not None else self.threshold
       results = []
+      querystring = self.key(query) if usekey else query
       # Identify possible results
-      for match, samegrams in self.items_sharing_ngrams(query).iteritems():
-         allgrams = (len(self.pad(self.qconv(query))) 
+      for match, samegrams in self.items_sharing_ngrams(querystring).iteritems():
+         allgrams = (len(self.pad(querystring))
                      + self.length[match] - (2 * self.N) - samegrams + 2)
          similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
          if similarity >= threshold:

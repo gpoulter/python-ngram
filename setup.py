@@ -50,7 +50,7 @@ if sys.version_info >= (3,):
 
 setup(
     name = 'ngram',
-    version = '3.1',
+    version = '3.2',
     py_modules = ['ngram'],
     zip_safe = True,
     author = 'Graham Poulter, Michael Albert',
