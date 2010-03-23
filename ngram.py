@@ -203,8 +203,21 @@ class NGram(set):
         results.sort(key=lambda x:x[1], reverse=True)
         return results
 
+    def find(self, query, usekey=False, threshold=None):
+        """Simply return the best match to the query.
 
-
+        >>> from ngram import NGram
+        >>> n = NGram(["Joseph","John","Kim"], key=lambda x:x.lower())
+        >>> n.find('Kam')
+        'Kim'
+        >>> n.find("Josef")
+        'Joseph'
+        """
+        results = self.search(query, usekey, threshold)
+        if results:
+            return results[0][0]
+        else:
+            return None
 
     @staticmethod
     def ngram_similarity(samegrams, allgrams, warp=1.0):
