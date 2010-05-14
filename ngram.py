@@ -53,7 +53,7 @@ class NGram(set):
     :type pad_char: str or unicode
 
     :param pad_char: character to use for padding.  Default is '$', but consider using the\
-    non-breaking space character, ``u'\0xa'``.
+    non-breaking space character, ``u'\\xa0'`` (``u"\\u00A0"``).
 
     :type key: function(item) -> str/unicode 
 
@@ -97,7 +97,7 @@ class NGram(set):
         self._grams = {}
         self.length = {}
         self.update(items)
-        
+
     def copy(self, items=None):
         """Create a deep copy of the current instance by using the same items and
         constructor parameters.
@@ -112,12 +112,12 @@ class NGram(set):
     def pad(self, string):
         """Pad a string in preparation for splitting into ngrams."""
         return self._padding + string + self._padding
-            
+
     def ngrams(self, string):
         """Iterate over the ngrams of a string.  No padding is performed."""
         for i in range(len(string) - self.N + 1):
             yield string[i:i+self.N]
-            
+
     def ngrams_pad(self, string):
         """Iterate over ngrams of a string, padding the string before processing."""
         return self.ngrams(self.pad(string))
@@ -143,7 +143,7 @@ class NGram(set):
             del self.length[item]
             for ngram in self.ngrams_pad(self.key(item)):
                 del self._grams[ngram][item]
-            
+
     def items_sharing_ngrams(self, query):
         """Retrieve the subset of items that share n-grams the query string.
 
@@ -170,7 +170,7 @@ class NGram(set):
 
     def search(self, query, usekey=False, threshold=None):
         """Search the index for items that have similarity to the query.
-        
+
         :param query: returned items will have at least `threshold` similarity to
         the query.
 
@@ -222,7 +222,7 @@ class NGram(set):
     @staticmethod
     def ngram_similarity(samegrams, allgrams, warp=1.0):
         """Similarity for two sets of n-grams.
-        
+
         :note: ``similarity = (a**e - d**e)/a**e`` where `a` is "all n-grams", 
         `d` is "different n-grams" and `e` is the warp.
 
@@ -251,7 +251,7 @@ class NGram(set):
 
     @staticmethod
     def compare(s1, s2, **kwargs):
-        """Compares two strings and return their similarity.  
+        """Compares two strings and returns their similarity.  
 
         :param s1: first string
         :param s2: second string
@@ -278,12 +278,12 @@ class NGram(set):
             return 0.0
 
 ### Reimplement updating set operations on top of NGram add/remove
-        
+
     def update(self, items):
         """Update the set with new items."""
         for item in items:
             self.add(item)
-                
+
     def discard(self, item):
         """If `item` is a member of the set, remove it."""
         if item in self:
@@ -297,7 +297,7 @@ class NGram(set):
     def intersection_update(self, other):
         """Update the set with the intersection of itself and `other`."""
         self.difference_update([x for x in self if x not in other])
-        
+
     def symmetric_difference_update(self, other):
         """Update the set with the symmetric difference of itself and `other`."""
         intersection = self.intersection(other) # record intersection of sets
