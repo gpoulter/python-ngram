@@ -61,6 +61,7 @@ setup(
     download_url = 'http://pypi.python.org/pypi/ngram',
     keywords = "ngram string similarity",
     test_suite = 'test_ngram',
+    scripts = ['scripts/csvjoin.py'],
     platforms = ['any'],
     **params
 )
