@@ -204,7 +204,7 @@ class NGram(set):
         return results
 
     def find(self, query, usekey=False, threshold=None):
-        """Simply return the best match to the query.
+        """Simply return the best match to the query, None on no match.
 
         >>> from ngram import NGram
         >>> n = NGram(["Joseph","John","Kim"], key=lambda x:x.lower())
