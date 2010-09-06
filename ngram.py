@@ -167,34 +167,43 @@ class NGram(set):
             except KeyError:
                 pass
         return shared
+    
+    def searchitem(self, item, threshold=None):
+        """Search the index for items whose key exceeds the threshold
+        similarity to the key of the given item.
+        
+        :return: list of pairs of (item,similarity) by decreasing similarity.
+        
+        >>> from ngram import NGram
+        >>> n = NGram([(0,"ABCD"),(1,"ABCE"),(2,"FG")], key=lambda x:x[1])
+        >>> n.searchitem((2,"ABC"))
+        [((0, 'ABCD'), 0.375), ((1, 'ABCE'), 0.375)]
+        """
+        return self.search(self.key(item))
 
-    def search(self, query, usekey=False, threshold=None):
-        """Search the index for items that have similarity to the query.
+    def search(self, query, threshold=None):
+        """Search the index for items whose key exceeds threshold 
+        similarity to the query string.
 
         :param query: returned items will have at least `threshold` similarity to
-        the query.
-
-        :param usekey: Use the `key` specified in the constructor to transform the
-        query into a string.  :param threshold: override the threshold specified
-        in the constructor.
+        the query string.
 
         :return: list of pairs of (item,similarity) by decreasing similarity.
 
         >>> from ngram import NGram
-        >>> n = NGram([(0,"Josef"),(1,"Joseph"),(2,"Jo")], key=lambda x:x[1])
-        >>> n.search("osef")
-        [((0, 'Josef'), 0.44444444444444442), ((1, 'Joseph'), 0.076923076923076927)]
-        >>> n.search((3,"osef"), usekey=True)
-        [((0, 'Josef'), 0.44444444444444442), ((1, 'Joseph'), 0.076923076923076927)]
-        >>> n.search("Jo", threshold=0.25)
-        [((2, 'Jo'), 1.0)]
+        >>> n = NGram([(0,"ABCD"),(1,"ABCE"),(2,"FG")], key=lambda x:x[1])
+        >>> n.search("ABC")
+        [((0, 'ABCD'), 0.375), ((1, 'ABCE'), 0.375)]
+        >>> n.search("D")
+        [((0, 'ABCD'), 0.125)]
+        >>> n.search("FG")
+        [((2, 'FG'), 1.0)]
         """
         threshold = threshold if threshold is not None else self.threshold
         results = []
-        querystring = self.key(query) if usekey else query
         # Identify possible results
-        for match, samegrams in self.items_sharing_ngrams(querystring).iteritems():
-            allgrams = (len(self.pad(querystring))
+        for match, samegrams in self.items_sharing_ngrams(query).iteritems():
+            allgrams = (len(self.pad(query))
                         + self.length[match] - (2 * self.N) - samegrams + 2)
             similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
             if similarity >= threshold:
@@ -202,8 +211,25 @@ class NGram(set):
         # Sort results by decreasing similarity
         results.sort(key=lambda x:x[1], reverse=True)
         return results
+    
+    def finditem(self, item, threshold=None):
+        """Return most similar item to the provided one, or None if
+        nothing exceeds the threshold.
 
-    def find(self, query, usekey=False, threshold=None):
+        >>> from ngram import NGram
+        >>> n = NGram([(0,"Joseph"),(1,"John"),(2,"Kim")], key=lambda x:x[1].lower())
+        >>> n.finditem((3,'Kam'))	
+        (2, 'Kim')
+        >>> n.finditem((4,"Josef"))
+        (0, 'Joseph')
+        """
+        results = self.searchitem(item, threshold)
+        if results:
+            return results[0][0]
+        else:
+            return None
+
+    def find(self, query, threshold=None):
         """Simply return the best match to the query, None on no match.
 
         >>> from ngram import NGram
@@ -213,7 +239,7 @@ class NGram(set):
         >>> n.find("Josef")
         'Joseph'
         """
-        results = self.search(query, usekey, threshold)
+        results = self.search(query, threshold)
         if results:
             return results[0][0]
         else:
@@ -259,8 +285,8 @@ class NGram(set):
         :return: similarity between 0.0 and 1.0.
 
         >>> from ngram import NGram
-        >>> NGram.compare('foo', 'foobar')
-        0.29999999999999999
+        >>> NGram.compare('foo', 'foob')
+        0.375
         >>> NGram.compare('foo', 'boo')
         0.25
         >>> NGram.compare('abcd', 'bcd') #N=2
@@ -277,7 +303,7 @@ class NGram(set):
         except IndexError:
             return 0.0
 
-### Reimplement updating set operations on top of NGram add/remove
+    ### Set operations implemented on top of NGram add/remove
 
     def update(self, items):
         """Update the set with new items."""
