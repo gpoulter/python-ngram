@@ -8,9 +8,8 @@ Comparing and searching strings
 The static :meth:`~ngram.NGram.compare` compares two strings.
 
 .. doctest::
-
    >>> import ngram
-   >>> ngram.NGram.compare('Boo','Bar',N=1)
+   >>> ngram.NGram.compare('Ham','Spam',N=1)
    0.20000000000000001
 
 The :class:`~ngram.NGram` is an ordinary set augmented by the ability
@@ -18,6 +17,7 @@ to search for members by n-gram similarity.  Below we use
 :meth:`~ngram.NGram.search` returns matching strings ranked by
 decreasing similarity.
 
+.. doctest::
    >>> G = ngram.NGram(['joe','joseph','jon','john','sally'])
    >>> G.search('jon')
    [('jon', 1.0), ('john', 0.375), ('joe', 0.25), ('joseph', 0.18181818181818182)]
@@ -32,7 +32,6 @@ Transforming items
 For example, index the lower-case version of a string.
 
 .. doctest::
-
    >>> G = ngram.NGram(key=lambda x:x.lower())
    >>> G.key('AbC')
    'abc'
@@ -75,7 +74,6 @@ incorrect if one character uses more than one byte.
 So, n-gram splitting works fine with ASCII byte strings
 
 .. doctest::
-
    >>> index = ngram.NGram(N=3)
    >>> list(index.ngrams(index.pad("abc")))
    ['$$a', '$ab', 'abc', 'bc$', 'c$$']
@@ -86,8 +84,7 @@ as a 2-byte string. The unicode string ``u'\xe9'`` will be handled
 correctly as a single character.
 
 .. doctest::
-
-   >>> index = ngram.NGram(pad_len=1,N=3)
+   >>> index = ngram.NGram(pad_len=1, N=3)
    >>> list(index.ngrams_pad('é'))
    ['$\xc3\xa9', '\xc3\xa9$']
    >>> list(index.ngrams_pad(u'é'))

@@ -72,19 +72,19 @@ class NGram(set):
                     N=3, pad_len=None, pad_char='$'):
         super(NGram, self).__init__()
         if not (0 <= threshold <= 1):
-            raise ValueError("Threshold %s outside 0.0 to 1.0 range" % threshold)
+            raise ValueError("Threshold outside 0.0 to 1.0 range: " + threshold)
         if not(1.0 <= warp <= 3.0):
-            raise ValueError("Warp %s outside 1.0 to 3.0 range" % warp)
+            raise ValueError("Warp outside 1.0 to 3.0 range: " + warp)
         if not N >= 1:
-            raise ValueError("N of %s needs to be >= 1" % N)
+            raise ValueError("Require N >= 1, not: " + N)
         if pad_len is None:
             pad_len = N-1
         if not (0 <= pad_len < N):
-            raise ValueError("pad_len of %s is outside 0 to %d range" % (pad_len,N))
+            raise ValueError("pad_len out of range: " + pad_len)
         if not (isinstance(pad_char,basestring) and len(pad_char)==1):
-            raise ValueError("pad_char %s is not a single-character string." % pad_char)
-        if not (key is None or hasattr(key, "__call__")):
-            raise ValueError("key %s is not a function." % pad_char)
+            raise ValueError("pad_char not single-character string: " + pad_char)
+        if key is not None and not callable(key):
+            raise ValueError("key is not a function: " + key)
         self.threshold = threshold
         self.warp = warp
         self.N = N
@@ -97,7 +97,17 @@ class NGram(set):
         self.update(items)
         
     def __reduce__(self):
-        """Return state information for pickling, no references to this instance."""
+        """Return state information for pickling, no references to this instance.
+        The key function must be None, a builtin function, or a named
+        module-level function.
+        
+        >>> n = NGram([0xDEADBEEF, 0xBEEF], key=hex)
+        >>> import pickle
+        >>> p = pickle.dumps(n)
+        >>> m = pickle.loads(p)
+        >>> m
+        NGram([3735928559, 48879])
+        """
         return NGram, (list(self), self.threshold, self.warp, self._key,
                        self.N, self._pad_len, self._pad_char)
         
@@ -130,7 +140,7 @@ class NGram(set):
         """Pad a string in preparation for splitting into ngrams.
 
         >>> n = NGram()
-        >>> n.pad("ham")
+        >>> n.pad('ham')
         '$$ham$$'
         """
         return self._padding + string + self._padding
