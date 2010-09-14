@@ -96,6 +96,25 @@ class NGram(set):
         self.length = {}
         self.update(items)
         
+    def __reduce__(self):
+        """Return state information for pickling."""
+        return NGram, (list(self), self.threshold, self.warp, self.key,
+                       self.N, self._pad_len, self._pad_char)
+        
+    def copy(self):
+        """Return a new copy of the index.
+        
+        >>> n = NGram(['eggs', 'spam'])
+        >>> m = n.copy()
+        >>> m.add('ham')
+        >>> n
+        NGram(['eggs', 'spam'])
+        >>> m
+        NGram(['eggs', 'ham', 'spam'])
+        """
+        builder, args = self.__reduce__()
+        return builder(*args)
+
     def key(self, item):
         """Get the key string for the item.
         
@@ -104,16 +123,6 @@ class NGram(set):
         'ham'
         """
         return self._key(item) if self._key else item
-
-    def copy(self, items=None):
-        """Create a deep copy of the current instance by using the same items and
-        constructor parameters.
-
-        :type items: [item,...]
-        :param items: Index these items instead of those in the original.
-        """
-        return NGram(items or self, self.threshold, self.warp, self.key,
-                self.N, self._pad_len, self._pad_char)
 
     def pad(self, string):
         """Pad a string in preparation for splitting into ngrams.
@@ -133,7 +142,7 @@ class NGram(set):
         """
         for i in range(len(string) - self.N + 1):
             yield string[i:i+self.N]
-
+            
     def split(self, string):
         """Pads a string and iterates over its ngrams.
 
