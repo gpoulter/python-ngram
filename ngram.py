@@ -98,7 +98,7 @@ class NGram(set):
         
     def __reduce__(self):
         """Return state information for pickling, no references to this instance."""
-        return NGram, (list(self), self.threshold, self.warp, self.key,
+        return NGram, (list(self), self.threshold, self.warp, self._key,
                        self.N, self._pad_len, self._pad_char)
         
     def copy(self):
@@ -114,7 +114,7 @@ class NGram(set):
         >>> m
         NGram(['eggs', 'ham', 'spam'])
         """
-        return NGram(self, self.threshold, self.warp, self.key,
+        return NGram(self, self.threshold, self.warp, self._key,
                      self.N, self._pad_len, self._pad_char)
 
     def key(self, item):
