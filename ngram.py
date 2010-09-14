@@ -97,13 +97,15 @@ class NGram(set):
         self.update(items)
         
     def __reduce__(self):
-        """Return state information for pickling."""
+        """Return state information for pickling, no references to this instance."""
         return NGram, (list(self), self.threshold, self.warp, self.key,
                        self.N, self._pad_len, self._pad_char)
         
     def copy(self):
-        """Return a new copy of the index.
+        """Return a shallow copy of the NGram object.  That is, instantiate
+        a new NGram from references to items stored in this one.
         
+        >>> from copy import deepcopy
         >>> n = NGram(['eggs', 'spam'])
         >>> m = n.copy()
         >>> m.add('ham')
@@ -112,8 +114,8 @@ class NGram(set):
         >>> m
         NGram(['eggs', 'ham', 'spam'])
         """
-        builder, args = self.__reduce__()
-        return builder(*args)
+        return NGram(self, self.threshold, self.warp, self.key,
+                     self.N, self._pad_len, self._pad_char)
 
     def key(self, item):
         """Get the key string for the item.
