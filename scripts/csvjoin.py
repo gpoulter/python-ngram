@@ -4,7 +4,7 @@
 ==================================================================
 
 Performs a left similarity join between two CSV files. For each row in the
-first file, take the specified join column and find similar rows in the 
+first file, take the specified join column and find similar rows in the
 second file based on ngram similarity to a specified column in the second file.
 
 For each resulting pair of rows, output a row consisting of the
@@ -20,7 +20,7 @@ Usage::
    The files to join
 
 Specify CSV file then the column in the file to use for joining. <outfile>
-is where to write the CSV results.  
+is where to write the CSV results.
 
 For example::
 
@@ -60,17 +60,17 @@ def lowstrip(term):
 
 def main(left_path, left_column, right_path, right_column, outfile, titles, join, minscore, count, warp):
     """Perform the similarity join"""
-    right_file = csv.reader(open(right_path,'r'))
+    right_file = csv.reader(open(right_path, 'r'))
     if titles:
         right_header = right_file.next()
-    index = NGram((tuple(r) for r in right_file), 
-                  threshold=minscore, 
+    index = NGram((tuple(r) for r in right_file),
+                  threshold=minscore,
                   warp=warp, key=lambda x: lowstrip(x[right_column]))
-    left_file = csv.reader(open(left_path,'r'))
-    out = csv.writer(open(outfile,'w'))
+    left_file = csv.reader(open(left_path, 'r'))
+    out = csv.writer(open(outfile, 'w'))
     if titles:
         left_header = left_file.next()
-        out.writerow(left_header + ["Rank","Similarity"] + right_header)
+        out.writerow(left_header + ["Rank", "Similarity"] + right_header)
     for row in left_file:
         if not row: continue # skip blank lines
         row = tuple(row)
@@ -88,7 +88,7 @@ def parse_arguments(args=sys.argv[1:]):
     from optparse import OptionParser
     parser = OptionParser()
     parser.set_usage(__doc__.strip())
-    parser.add_option("-t", "--titles", action="store_true", 
+    parser.add_option("-t", "--titles", action="store_true",
                       help="The input files contain a heading row with column titles")
     parser.add_option("-j", "--join", action="store", type="choice", choices=["inner", "outer"],
                       help=("The kind of left join to perform.  Outer join outputs left-hand "
@@ -107,7 +107,7 @@ def parse_arguments(args=sys.argv[1:]):
         csv1, csv1_column, csv2, csv2_column, outfile = args
     except:
         parser.error("Invalid number of arguments.")
-    for path in [csv1,csv2]:
+    for path in [csv1, csv2]:
         if not os.path.isfile(path):
             parser.error('File "%s" does not exist.' % path)
     try:

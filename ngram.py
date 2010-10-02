@@ -55,7 +55,7 @@ class NGram(set):
     :param pad_char: character to use for padding.  Default is '$', but consider using the\
     non-breaking space character, ``u'\\xa0'`` (``u"\\u00A0"``).
 
-    :type key: function(item) -> str/unicode 
+    :type key: function(item) -> str/unicode
 
     :param key: Function to convert items into string, default is no conversion.
 
@@ -81,7 +81,7 @@ class NGram(set):
             pad_len = N-1
         if not (0 <= pad_len < N):
             raise ValueError("pad_len out of range: " + pad_len)
-        if not (isinstance(pad_char,basestring) and len(pad_char)==1):
+        if not (isinstance(pad_char, basestring) and len(pad_char)==1):
             raise ValueError("pad_char not single-character string: " + pad_char)
         if key is not None and not callable(key):
             raise ValueError("key is not a function: " + key)
@@ -95,12 +95,12 @@ class NGram(set):
         self._grams = {}
         self.length = {}
         self.update(items)
-        
+
     def __reduce__(self):
         """Return state information for pickling, no references to this instance.
         The key function must be None, a builtin function, or a named
         module-level function.
-        
+
         >>> n = NGram([0xDEADBEEF, 0xBEEF], key=hex)
         >>> import pickle
         >>> p = pickle.dumps(n)
@@ -110,11 +110,11 @@ class NGram(set):
         """
         return NGram, (list(self), self.threshold, self.warp, self._key,
                        self.N, self._pad_len, self._pad_char)
-        
+
     def copy(self):
         """Return a shallow copy of the NGram object.  That is, instantiate
         a new NGram from references to items stored in this one.
-        
+
         >>> from copy import deepcopy
         >>> n = NGram(['eggs', 'spam'])
         >>> m = n.copy()
@@ -129,7 +129,7 @@ class NGram(set):
 
     def key(self, item):
         """Get the key string for the item.
-        
+
         >>> n = NGram(key=lambda x:x[1])
         >>> n.key((3,"ham"))
         'ham'
@@ -154,29 +154,29 @@ class NGram(set):
         """
         for i in range(len(string) - self.N + 1):
             yield string[i:i+self.N]
-            
+
     def split(self, string):
         """Pads a string and iterates over its ngrams.
 
         >>> n = NGram()
         >>> list(n.split("ham"))
         ['$$h', '$ha', 'ham', 'am$', 'm$$']
-        """        
+        """
         return self._split(self.pad(string))
 
     def splititem(self, item):
         """Pads the string key of an item and iterates over its ngrams.
-        
+
         >>> n = NGram(key=lambda x:x[1])
         >>> item = (3,"ham")
         >>> list(n.splititem(item))
         ['$$h', '$ha', 'ham', 'am$', 'm$$']
         """
         return self.split(self.key(item))
-    
+
     def add(self, item):
         """Add an item to the N-gram index (only if it has not already been added).
-        
+
         >>> n = NGram()
         >>> n.add("ham")
         >>> n
@@ -199,7 +199,7 @@ class NGram(set):
 
     def remove(self, item):
         """Remove an item from the index. Inverts the add operation.
-        
+
         >>> n = NGram(['spam', 'eggs'])
         >>> n.remove('spam')
         >>> n
@@ -214,16 +214,16 @@ class NGram(set):
     def items_sharing_ngrams(self, query):
         """Retrieve the subset of items that share n-grams the query string.
 
-        :param query: look up items that share N-grams with this string. 
+        :param query: look up items that share N-grams with this string.
         :return: dictionary from matched string to the number of shared N-grams.
-        
+
         >>> n = NGram(["ham","spam","eggs"])
         >>> n.items_sharing_ngrams("mam")
         {'ham': 2, 'spam': 2}
         """
         # From matched string to number of N-grams shared with query string
-        shared = {} 
-        # Dictionary mapping n-gram to string to number of occurrences of that 
+        shared = {}
+        # Dictionary mapping n-gram to string to number of occurrences of that
         # ngram in the string that remain to be matched.
         remaining = {}
         for ngram in self.split(query):
@@ -238,31 +238,31 @@ class NGram(set):
             except KeyError:
                 pass
         return shared
-    
+
     def searchitem(self, item, threshold=None):
         """Search the index for items whose key exceeds the threshold
         similarity to the key of the given item.
-        
-        :return: list of pairs of (item,similarity) by decreasing similarity.
-        
+
+        :return: list of pairs of (item, similarity) by decreasing similarity.
+
         >>> from ngram import NGram
-        >>> n = NGram([(0,"SPAM"),(1,"SPAN"),(2,"EG")], key=lambda x:x[1])
-        >>> n.searchitem((2,"SPA"))
+        >>> n = NGram([(0, "SPAM"), (1, "SPAN"), (2, "EG")], key=lambda x:x[1])
+        >>> n.searchitem((2, "SPA"))
         [((0, 'SPAM'), 0.375), ((1, 'SPAN'), 0.375)]
         """
         return self.search(self.key(item))
 
     def search(self, query, threshold=None):
-        """Search the index for items whose key exceeds threshold 
+        """Search the index for items whose key exceeds threshold
         similarity to the query string.
 
         :param query: returned items will have at least `threshold` similarity to
         the query string.
 
-        :return: list of pairs of (item,similarity) by decreasing similarity.
+        :return: list of pairs of (item, similarity) by decreasing similarity.
 
         >>> from ngram import NGram
-        >>> n = NGram([(0,"SPAM"),(1,"SPAN"),(2,"EG")], key=lambda x:x[1])
+        >>> n = NGram([(0, "SPAM"), (1, "SPAN"), (2, "EG")], key=lambda x:x[1])
         >>> n.search("SPA")
         [((0, 'SPAM'), 0.375), ((1, 'SPAN'), 0.375)]
         >>> n.search("M")
@@ -282,16 +282,16 @@ class NGram(set):
         # Sort results by decreasing similarity
         results.sort(key=lambda x:x[1], reverse=True)
         return results
-    
+
     def finditem(self, item, threshold=None):
         """Return most similar item to the provided one, or None if
         nothing exceeds the threshold.
 
         >>> from ngram import NGram
-        >>> n = NGram([(0,"Spam"),(1,"Ham"),(2,"Eggsy")], key=lambda x:x[1].lower())
-        >>> n.finditem((3,'Hom'))	
+        >>> n = NGram([(0, "Spam"), (1, "Ham"), (2, "Eggsy")], key=lambda x:x[1].lower())
+        >>> n.finditem((3, 'Hom'))
         (1, 'Ham')
-        >>> n.finditem((4,"Oggsy"))
+        >>> n.finditem((4, "Oggsy"))
         (2, 'Eggsy')
         """
         results = self.searchitem(item, threshold)
@@ -320,24 +320,24 @@ class NGram(set):
     def _similarity(samegrams, allgrams, warp=1.0):
         """Similarity for two sets of n-grams.
 
-        :note: ``similarity = (a**e - d**e)/a**e`` where `a` is "all n-grams", 
+        :note: ``similarity = (a**e - d**e)/a**e`` where `a` is "all n-grams",
         `d` is "different n-grams" and `e` is the warp.
 
         :param samegrams: number of n-grams shared by the two strings.
-        
+
         :param allgrams: total of the distinct n-grams across the two strings.
         :return: similarity in the range 0.0 to 1.0.
 
         >>> from ngram import NGram
-        >>> NGram._similarity(5,10)
+        >>> NGram._similarity(5, 10)
         0.5
-        >>> NGram._similarity(5,10,warp=2)
+        >>> NGram._similarity(5, 10, warp=2)
         0.75
-        >>> NGram._similarity(5,10,warp=3)
+        >>> NGram._similarity(5, 10, warp=3)
         0.875
-        >>> NGram._similarity(2,4,warp=2)
+        >>> NGram._similarity(2, 4, warp=2)
         0.75
-        >>> NGram._similarity(3,4)
+        >>> NGram._similarity(3, 4)
         0.75
         """
         if abs(warp-1.0) < 1e-9:
@@ -349,7 +349,7 @@ class NGram(set):
 
     @staticmethod
     def compare(s1, s2, **kwargs):
-        """Compares two strings and returns their similarity.  
+        """Compares two strings and returns their similarity.
 
         :param s1: first string
         :param s2: second string
@@ -379,7 +379,7 @@ class NGram(set):
 
     def update(self, items):
         """Update the set with new items.
-        
+
         >>> n = NGram(["spam"])
         >>> n.update(["eggs"])
         >>> n
@@ -390,7 +390,7 @@ class NGram(set):
 
     def discard(self, item):
         """If `item` is a member of the set, remove it.
-        
+
         >>> n = NGram(['spam', 'eggs'])
         >>> n.discard('spam')
         >>> n.discard('ham')
@@ -402,7 +402,7 @@ class NGram(set):
 
     def difference_update(self, other):
         """Remove from this set all elements from `other` set.
-        
+
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam'])
         >>> n.difference_update(other)
@@ -414,7 +414,7 @@ class NGram(set):
 
     def intersection_update(self, other):
         """Update the set with the intersection of itself and `other`.
-        
+
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam', 'ham'])
         >>> n.intersection_update(other)
@@ -425,7 +425,7 @@ class NGram(set):
 
     def symmetric_difference_update(self, other):
         """Update the set with the symmetric difference of itself and `other`.
-        
+
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam', 'ham'])
         >>> n.intersection_update(other)
