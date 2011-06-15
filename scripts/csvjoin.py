@@ -71,7 +71,7 @@ def main(left_path, left_column, right_path, right_column,
 def console_main():
     """Process command-line arguments."""
     from argparse import ArgumentParser
-    parser = ArgumentParser(description=__doc__.strip())
+    parser = ArgumentParser(description=__doc__)
     parser.add_argument('-t', '--titles', action='store_true',
                         help='input files have column titles')
     parser.add_argument(
