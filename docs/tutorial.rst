@@ -10,7 +10,7 @@ The static :meth:`~ngram.NGram.compare` compares two strings.
 .. doctest::
    >>> import ngram
    >>> ngram.NGram.compare('Ham','Spam',N=1)
-   0.20000000000000001
+   0.4
 
 The :class:`~ngram.NGram` is an ordinary set augmented by the ability
 to search for members by n-gram similarity.  Below we use
@@ -47,9 +47,9 @@ For example, index the lower-case version of a string.
    []
    >>> # now lower-case both the items and the queries
    >>> lower = lambda x: x.lower()
-   >>> G = ngram.NGram(key=lower, qconv=lower)
+   >>> G = ngram.NGram(key=lower)
    >>> G.add('AbC')
-   >>> G.search('AbCD')
+   >>> G.search(lower('AbCD'))
    [('AbC', 0.375)]
 
 We can use the transform to index complex objects by a custom string
@@ -85,7 +85,7 @@ correctly as a single character.
 
 .. doctest::
    >>> index = ngram.NGram(pad_len=1, N=3)
-   >>> list(index.ngrams_pad('é'))
+   >>> list(index.split('é'))
    ['$\xc3\xa9', '\xc3\xa9$']
-   >>> list(index.ngrams_pad(u'é'))
+   >>> list(index.split(u'\xe9'))
    [u'$\xe9$']

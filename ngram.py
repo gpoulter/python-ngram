@@ -69,28 +69,38 @@ class NGram(set):
     """
 
     def __init__(self, items=[], threshold=0.0, warp=1.0, key=None,
-                    N=3, pad_len=None, pad_char='$'):
+                    N=3, pad_len=None, pad_char='$', **kwargs):
         super(NGram, self).__init__()
         if not (0 <= threshold <= 1):
-            raise ValueError("Threshold outside 0.0 to 1.0 range: " + threshold)
+            raise ValueError("threshold out of range 0.0 to 1.0: " 
+                             + repr(threshold))
         if not(1.0 <= warp <= 3.0):
-            raise ValueError("Warp outside 1.0 to 3.0 range: " + warp)
+            raise ValueError(
+                "warp out of range 1.0 to 3.0: " + repr(warp))
         if not N >= 1:
-            raise ValueError("Require N >= 1, not: " + N)
+            raise ValueError("N out of range (should be N >= 1): " + repr(N))
         if pad_len is None:
             pad_len = N-1
         if not (0 <= pad_len < N):
-            raise ValueError("pad_len out of range: " + pad_len)
+            raise ValueError("pad_len out of range: " + repr(pad_len))
         if not (isinstance(pad_char, basestring) and len(pad_char)==1):
-            raise ValueError("pad_char not single-character string: " + pad_char)
+            raise ValueError(
+                "pad_char is not single character: " + repr(pad_char))
         if key is not None and not callable(key):
-            raise ValueError("key is not a function: " + key)
+            raise ValueError("key is not a function: " + repr(key))
         self.threshold = threshold
         self.warp = warp
         self.N = N
         self._pad_len = pad_len
         self._pad_char = pad_char
         self._padding = pad_char * pad_len # derive a padding string
+        # compatibility shim for 3.1 iconv parameter
+        if 'iconv' in kwargs: 
+            self._key = kwargs.pop('iconv')
+        # no longer support 3.1 qconv parameter
+        if 'qconv' in kwargs: 
+            raise ValueError('qconv query conversion parameter unsupported. '
+            'Please process query to a string before calling .search')
         self._key = key
         self._grams = {}
         self.length = {}
@@ -154,6 +164,9 @@ class NGram(set):
         """
         for i in range(len(string) - self.N + 1):
             yield string[i:i+self.N]
+            
+    # compatibility with 3.1
+    ngrams = _split
 
     def split(self, string):
         """Pads a string and iterates over its ngrams.
@@ -163,6 +176,9 @@ class NGram(set):
         ['$$h', '$ha', 'ham', 'am$', 'm$$']
         """
         return self._split(self.pad(string))
+    
+    # compatibility with 3.1
+    ngrams_pad = split
 
     def splititem(self, item):
         """Pads the string key of an item and iterates over its ngrams.
@@ -276,7 +292,7 @@ class NGram(set):
         for match, samegrams in self.items_sharing_ngrams(query).iteritems():
             allgrams = (len(self.pad(query))
                         + self.length[match] - (2 * self.N) - samegrams + 2)
-            similarity = self._similarity(samegrams, allgrams, self.warp)
+            similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
             if similarity >= threshold:
                 results.append((match, similarity))
         # Sort results by decreasing similarity
@@ -317,7 +333,7 @@ class NGram(set):
             return None
 
     @staticmethod
-    def _similarity(samegrams, allgrams, warp=1.0):
+    def ngram_similarity(samegrams, allgrams, warp=1.0):
         """Similarity for two sets of n-grams.
 
         :note: ``similarity = (a**e - d**e)/a**e`` where `a` is "all n-grams",
