@@ -8,6 +8,7 @@ column in the second file. For each resulting pair of rows, output a row
 consisting of the fields from the first file, a column with the similarity
 value, and then the fields from the second file.
 """
+from __future__ import print_function
 
 import csv, os, re, sys
 from ngram import NGram
@@ -22,12 +23,11 @@ def main(left_path, left_column, right_path, right_column,
          outfile, titles, join, minscore, count, warp):
     """Perform the similarity join
 
-    >>> open('left.csv', 'w').write('''ID,NAME
+    >>> _ = open('left.csv', 'w').write('''ID,NAME
     ... 1,Joe
     ... 2,Kin
     ... 3,ZAS''')
-
-    >>> open('right.csv', 'w').write('''ID,NAME
+    >>> _ = open('right.csv', 'w').write('''ID,NAME
     ... ID,NAME
     ... A,Joe
     ... B,Jon
@@ -36,7 +36,7 @@ def main(left_path, left_column, right_path, right_column,
     >>> main(left_path='left.csv', left_column=1,
     ... right_path='right.csv', right_column=1, outfile='out.csv',
     ... titles=True, join='outer', minscore=0.24, count=5, warp=1.0)
-    >>> print open('out.csv').read()  #doctest: +NORMALIZE_WHITESPACE
+    >>> print(open('out.csv').read())  #doctest: +NORMALIZE_WHITESPACE
     ID,NAME,Rank,Similarity,ID,NAME
     1,Joe,1,1.0,A,Joe
     1,Joe,2,0.25,B,Jon
@@ -47,14 +47,14 @@ def main(left_path, left_column, right_path, right_column,
     """
     right_file = csv.reader(open(right_path, 'r'))
     if titles:
-        right_header = right_file.next()
+        right_header = next(right_file)
     index = NGram((tuple(r) for r in right_file),
                   threshold=minscore,
                   warp=warp, key=lambda x: lowstrip(x[right_column]))
     left_file = csv.reader(open(left_path, 'r'))
     out = csv.writer(open(outfile, 'w'))
     if titles:
-        left_header = left_file.next()
+        left_header = next(left_file)
         out.writerow(left_header + ["Rank", "Similarity"] + right_header)
     for row in left_file:
         if not row: continue # skip blank lines

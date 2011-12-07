@@ -72,9 +72,9 @@ class NGram(set):
                     N=3, pad_len=None, pad_char='$', **kwargs):
         super(NGram, self).__init__()
         if not (0 <= threshold <= 1):
-            raise ValueError("threshold out of range 0.0 to 1.0: " 
+            raise ValueError("threshold out of range 0.0 to 1.0: "
                              + repr(threshold))
-        if not(1.0 <= warp <= 3.0):
+        if not (1.0 <= warp <= 3.0):
             raise ValueError(
                 "warp out of range 1.0 to 3.0: " + repr(warp))
         if not N >= 1:
@@ -83,7 +83,7 @@ class NGram(set):
             pad_len = N-1
         if not (0 <= pad_len < N):
             raise ValueError("pad_len out of range: " + repr(pad_len))
-        if not (isinstance(pad_char, basestring) and len(pad_char)==1):
+        if not len(pad_char)==1:
             raise ValueError(
                 "pad_char is not single character: " + repr(pad_char))
         if key is not None and not callable(key):
@@ -95,10 +95,10 @@ class NGram(set):
         self._pad_char = pad_char
         self._padding = pad_char * pad_len # derive a padding string
         # compatibility shim for 3.1 iconv parameter
-        if 'iconv' in kwargs: 
+        if 'iconv' in kwargs:
             self._key = kwargs.pop('iconv')
         # no longer support 3.1 qconv parameter
-        if 'qconv' in kwargs: 
+        if 'qconv' in kwargs:
             raise ValueError('qconv query conversion parameter unsupported. '
             'Please process query to a string before calling .search')
         self._key = key
@@ -115,8 +115,8 @@ class NGram(set):
         >>> import pickle
         >>> p = pickle.dumps(n)
         >>> m = pickle.loads(p)
-        >>> m
-        NGram([3735928559, 48879])
+        >>> list(m)
+        [3735928559, 48879]
         """
         return NGram, (list(self), self.threshold, self.warp, self._key,
                        self.N, self._pad_len, self._pad_char)
@@ -129,10 +129,10 @@ class NGram(set):
         >>> n = NGram(['eggs', 'spam'])
         >>> m = n.copy()
         >>> m.add('ham')
-        >>> n
-        NGram(['eggs', 'spam'])
-        >>> m
-        NGram(['eggs', 'ham', 'spam'])
+        >>> list(n)
+        ['eggs', 'spam']
+        >>> list(m)
+        ['eggs', 'ham', 'spam']
         """
         return NGram(self, self.threshold, self.warp, self._key,
                      self.N, self._pad_len, self._pad_char)
@@ -164,7 +164,7 @@ class NGram(set):
         """
         for i in range(len(string) - self.N + 1):
             yield string[i:i+self.N]
-            
+
     # compatibility with 3.1
     ngrams = _split
 
@@ -176,7 +176,7 @@ class NGram(set):
         ['$$h', '$ha', 'ham', 'am$', 'm$$']
         """
         return self._split(self.pad(string))
-    
+
     # compatibility with 3.1
     ngrams_pad = split
 
@@ -195,11 +195,11 @@ class NGram(set):
 
         >>> n = NGram()
         >>> n.add("ham")
-        >>> n
-        NGram(['ham'])
+        >>> list(n)
+        ['ham']
         >>> n.add("spam")
-        >>> n
-        NGram(['ham', 'spam'])
+        >>> list(n)
+        ['ham', 'spam']
         """
         if item not in self:
             # Add the item to the base set
@@ -218,8 +218,8 @@ class NGram(set):
 
         >>> n = NGram(['spam', 'eggs'])
         >>> n.remove('spam')
-        >>> n
-        NGram(['eggs'])
+        >>> list(n)
+        ['eggs']
         """
         if item in self:
             super(NGram, self).remove(item)
@@ -345,15 +345,15 @@ class NGram(set):
         :return: similarity in the range 0.0 to 1.0.
 
         >>> from ngram import NGram
-        >>> NGram._similarity(5, 10)
+        >>> NGram.ngram_similarity(5, 10)
         0.5
-        >>> NGram._similarity(5, 10, warp=2)
+        >>> NGram.ngram_similarity(5, 10, warp=2)
         0.75
-        >>> NGram._similarity(5, 10, warp=3)
+        >>> NGram.ngram_similarity(5, 10, warp=3)
         0.875
-        >>> NGram._similarity(2, 4, warp=2)
+        >>> NGram.ngram_similarity(2, 4, warp=2)
         0.75
-        >>> NGram._similarity(3, 4)
+        >>> NGram.ngram_similarity(3, 4)
         0.75
         """
         if abs(warp-1.0) < 1e-9:
@@ -398,8 +398,8 @@ class NGram(set):
 
         >>> n = NGram(["spam"])
         >>> n.update(["eggs"])
-        >>> n
-        NGram(['eggs', 'spam'])
+        >>> list(n)
+        ['eggs', 'spam']
         """
         for item in items:
             self.add(item)
@@ -410,8 +410,8 @@ class NGram(set):
         >>> n = NGram(['spam', 'eggs'])
         >>> n.discard('spam')
         >>> n.discard('ham')
-        >>> n
-        NGram(['eggs'])
+        >>> list(n)
+        ['eggs']
         """
         if item in self:
             self.remove(item)
@@ -422,8 +422,8 @@ class NGram(set):
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam'])
         >>> n.difference_update(other)
-        >>> n
-        NGram(['eggs'])
+        >>> list(n)
+        ['eggs']
         """
         for x in other:
             self.discard(x)
@@ -434,8 +434,8 @@ class NGram(set):
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam', 'ham'])
         >>> n.intersection_update(other)
-        >>> n
-        NGram(['spam'])
+        >>> list(n)
+        ['spam']
         """
         self.difference_update([x for x in self if x not in other])
 
@@ -445,8 +445,8 @@ class NGram(set):
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam', 'ham'])
         >>> n.intersection_update(other)
-        >>> n
-        NGram(['spam'])
+        >>> list(n)
+        ['spam']
         """
         intersection = self.intersection(other) # record intersection of sets
         self.update(other) # add items present in other

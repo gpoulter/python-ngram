@@ -27,7 +27,7 @@ Programming Language :: Python :: 3.2
 
 params = dict()
 
-with file('README.rst') as docs:
+with open('README.rst') as docs:
     params['description'] = docs.readline()
     params['long_description'] = docs.read()
 
