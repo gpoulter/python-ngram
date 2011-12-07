@@ -1,16 +1,4 @@
 #!/usr/bin/python
-"""Set that retrieves members by N-Gram similarity to a query string.
-
-The NGram class is a set that supports searching for its members by
-N-Gram string similarity. It is a full subclass of the built-in `set`
-that maintains N-Gram indexing on all set operations. The algorithm is
-based from `String::Trigram
-<http://search.cpan.org/dist/String-Trigram/>`_ by Tarek Ahmed.
-
-Here is the `documentation home page
-<http://packages.python.org/ngram/>`_ and the `tutorial
-<http://packages.python.org/ngram/tutorial.html>`_.
-"""
 
 import sys
 try:
@@ -32,21 +20,22 @@ Topic :: Text Processing :: Linguistic
 Operating System :: OS Independent
 Programming Language :: Python :: 2
 Programming Language :: Python :: 2.6
+Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3
-Programming Language :: Python :: 3.1
+Programming Language :: Python :: 3.2
 """
 
-params = dict(
-    description = __doc__.split("\n")[0],
-    long_description = "\n".join(__doc__.split("\n")[2:]),
-    classifiers = [c.strip() for c in classifiers.split('\n') if c.strip()],
-)
+params = dict()
+
+with file('README.rst') as docs:
+    params['description'] = docs.readline()
+    params['long_description'] = docs.read()
+
+params['classifiers'] = [c.strip() for c in classifiers.split('\n') if c.strip()],
 
 if sys.version_info >= (3,):
-    params.update(
-        use_2to3 = True,
-        convert_2to3_doctests = ['doc/tutorial.rst'],
-    )
+    params['use_2to3'] = True
+    params['convert_2to3_doctests'] = ['doc/tutorial.rst']
 
 setup(
     name = 'ngram',
