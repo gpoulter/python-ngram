@@ -444,10 +444,10 @@ class NGram(set):
 
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam', 'ham'])
-        >>> n.intersection_update(other)
+        >>> n.symmetric_difference_update(other)
         >>> list(n)
-        ['spam']
+        ['eggs', 'ham']
         """
         intersection = self.intersection(other) # record intersection of sets
         self.update(other) # add items present in other
-        self.difference_update(self, intersection) # remove items present in both
+        self.difference_update(intersection) # remove items present in both
