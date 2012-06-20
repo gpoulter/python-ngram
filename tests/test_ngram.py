@@ -20,21 +20,19 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 """
 
-from pprint import pprint as pp
 import unittest
-import string
 
 from ngram import NGram
 
 class NgramTests(unittest.TestCase):
     """Tests of the ngram class"""
-    
+
     items = ['sdafaf','asfwef','asdfawe','adfwe', 'askfjwehiuasdfji']
-    
+
     def test_ngram_search(self):
         """Tests from the original ngram.py, to check that the
         rewrite still uses the same underlying algorithm"""
-        
+
         # Basic searching of the index
         idx = NGram(self.items)
         self.assertEqual(idx.search('askfjwehiuasdfji'),
@@ -44,13 +42,13 @@ class NgramTests(unittest.TestCase):
              ('adfwe', 0.041666666666666664),
             ])
         self.assertEqual(idx.search('afadfwe')[:2],
-                         [('adfwe', 0.59999999999999998), 
+                         [('adfwe', 0.59999999999999998),
                           ('asdfawe', 0.20000000000000001)])
-        
+
         # Pairwise comparison of strings
         self.assertEqual(NGram.compare('sdfeff', 'sdfeff'), 1.0)
         self.assertEqual(NGram.compare('sdfeff', 'zzzzzz'), 0.0)
-        
+
     def test_set_operations(self):
         """Test advanced set operations"""
         items1 = set(["abcde", "cdefg", "fghijk", "ijklm"])
@@ -70,6 +68,6 @@ class NgramTests(unittest.TestCase):
         self.assertEqual(results(idx1.search('ijk')), [])
         self.assertEqual(results(idx1.search('def')), ['cdefg'])
 
-        
+
 if __name__ == "__main__":
     unittest.main()
