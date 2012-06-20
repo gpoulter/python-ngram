@@ -1,16 +1,14 @@
 #!/usr/bin/python
 
+import inspect
+import os
 import sys
 try:
     from setuptools import setup
 except ImportError:
-    try:
-        from distribute_setup import use_setuptools
-        use_setuptools()
-        from setuptools import setup
-    except ImportError:
-        from distutils.core import setup
+    from distutils.core import setup  # pylint: ignore=W801
 
+ROOT = os.path.dirname(inspect.getfile(inspect.currentframe()))
 
 classifiers = """
 Development Status :: 5 - Production/Stable
@@ -27,7 +25,7 @@ Programming Language :: Python :: 3.2
 
 params = dict()
 
-with open('README.rst') as docs:
+with open(os.path.join(ROOT, 'README')) as docs:
     params['description'] = docs.readline()
     params['long_description'] = docs.read()
 
