@@ -244,7 +244,7 @@ class NGram(set):
         remaining = {}
         for ngram in self.split(query):
             try:
-                for match, count in self._grams[ngram].iteritems():
+                for match, count in self._grams[ngram].items():
                     remaining.setdefault(ngram, {}).setdefault(match, count)
                     # match up to as many occurrences of ngram as exist in the matched string
                     if remaining[ngram][match] > 0:
@@ -289,7 +289,7 @@ class NGram(set):
         threshold = threshold if threshold is not None else self.threshold
         results = []
         # Identify possible results
-        for match, samegrams in self.items_sharing_ngrams(query).iteritems():
+        for match, samegrams in self.items_sharing_ngrams(query).items():
             allgrams = (len(self.pad(query))
                         + self.length[match] - (2 * self.N) - samegrams + 2)
             similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
