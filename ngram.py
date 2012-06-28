@@ -111,6 +111,7 @@ class NGram(set):
         The key function must be None, a builtin function, or a named
         module-level function.
 
+        >>> from ngram import NGram
         >>> n = NGram([0xDEADBEEF, 0xBEEF], key=hex)
         >>> import pickle
         >>> p = pickle.dumps(n)
@@ -125,6 +126,7 @@ class NGram(set):
         """Return a shallow copy of the NGram object.  That is, instantiate
         a new NGram from references to items stored in this one.
 
+        >>> from ngram import NGram
         >>> from copy import deepcopy
         >>> n = NGram(['eggs', 'spam'])
         >>> m = n.copy()
@@ -140,6 +142,7 @@ class NGram(set):
     def key(self, item):
         """Get the key string for the item.
 
+        >>> from ngram import NGram
         >>> n = NGram(key=lambda x:x[1])
         >>> n.key((3,"ham"))
         'ham'
@@ -149,6 +152,7 @@ class NGram(set):
     def pad(self, string):
         """Pad a string in preparation for splitting into ngrams.
 
+        >>> from ngram import NGram
         >>> n = NGram()
         >>> n.pad('ham')
         '$$ham$$'
@@ -158,6 +162,7 @@ class NGram(set):
     def _split(self, string):
         """Iterates over the ngrams of a string (no padding).
 
+        >>> from ngram import NGram
         >>> n = NGram()
         >>> list(n._split("hamegg"))
         ['ham', 'ame', 'meg', 'egg']
@@ -171,6 +176,7 @@ class NGram(set):
     def split(self, string):
         """Pads a string and iterates over its ngrams.
 
+        >>> from ngram import NGram
         >>> n = NGram()
         >>> list(n.split("ham"))
         ['$$h', '$ha', 'ham', 'am$', 'm$$']
@@ -183,6 +189,7 @@ class NGram(set):
     def splititem(self, item):
         """Pads the string key of an item and iterates over its ngrams.
 
+        >>> from ngram import NGram
         >>> n = NGram(key=lambda x:x[1])
         >>> item = (3,"ham")
         >>> list(n.splititem(item))
@@ -193,6 +200,7 @@ class NGram(set):
     def add(self, item):
         """Add an item to the N-gram index (only if it has not already been added).
 
+        >>> from ngram import NGram
         >>> n = NGram()
         >>> n.add("ham")
         >>> list(n)
@@ -216,6 +224,7 @@ class NGram(set):
     def remove(self, item):
         """Remove an item from the index. Inverts the add operation.
 
+        >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
         >>> n.remove('spam')
         >>> list(n)
@@ -233,6 +242,7 @@ class NGram(set):
         :param query: look up items that share N-grams with this string.
         :return: dictionary from matched string to the number of shared N-grams.
 
+        >>> from ngram import NGram
         >>> n = NGram(["ham","spam","eggs"])
         >>> n.items_sharing_ngrams("mam")
         {'ham': 2, 'spam': 2}
@@ -396,6 +406,7 @@ class NGram(set):
     def update(self, items):
         """Update the set with new items.
 
+        >>> from ngram import NGram
         >>> n = NGram(["spam"])
         >>> n.update(["eggs"])
         >>> list(n)
@@ -407,6 +418,7 @@ class NGram(set):
     def discard(self, item):
         """If `item` is a member of the set, remove it.
 
+        >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
         >>> n.discard('spam')
         >>> n.discard('ham')
@@ -419,6 +431,7 @@ class NGram(set):
     def difference_update(self, other):
         """Remove from this set all elements from `other` set.
 
+        >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam'])
         >>> n.difference_update(other)
@@ -431,6 +444,7 @@ class NGram(set):
     def intersection_update(self, other):
         """Update the set with the intersection of itself and `other`.
 
+        >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam', 'ham'])
         >>> n.intersection_update(other)
@@ -442,6 +456,7 @@ class NGram(set):
     def symmetric_difference_update(self, other):
         """Update the set with the symmetric difference of itself and `other`.
 
+        >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam', 'ham'])
         >>> n.symmetric_difference_update(other)
