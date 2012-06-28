@@ -10,7 +10,7 @@ value, and then the fields from the second file.
 """
 from __future__ import print_function
 
-import csv, os, re, sys
+import csv, os, re
 from ngram import NGram
 
 def lowstrip(term):
@@ -21,30 +21,7 @@ def lowstrip(term):
 
 def main(left_path, left_column, right_path, right_column,
          outfile, titles, join, minscore, count, warp):
-    """Perform the similarity join
-
-    >>> _ = open('left.csv', 'w').write('''ID,NAME
-    ... 1,Joe
-    ... 2,Kin
-    ... 3,ZAS''')
-    >>> _ = open('right.csv', 'w').write('''ID,NAME
-    ... ID,NAME
-    ... A,Joe
-    ... B,Jon
-    ... C,Job
-    ... D,Kim''')
-    >>> main(left_path='left.csv', left_column=1,
-    ... right_path='right.csv', right_column=1, outfile='out.csv',
-    ... titles=True, join='outer', minscore=0.24, count=5, warp=1.0)
-    >>> print(open('out.csv').read())  #doctest: +NORMALIZE_WHITESPACE
-    ID,NAME,Rank,Similarity,ID,NAME
-    1,Joe,1,1.0,A,Joe
-    1,Joe,2,0.25,B,Jon
-    1,Joe,3,0.25,C,Job
-    2,Kin,1,0.25,D,Kim
-    3,ZAS
-    <BLANKLINE>
-    """
+    """Perform the similarity join"""
     right_file = csv.reader(open(right_path, 'r'))
     if titles:
         right_header = next(right_file)
