@@ -6,7 +6,7 @@ import sys
 try:
     from setuptools import setup
 except ImportError:
-    from distutils.core import setup  # pylint: ignore=W801
+    from distutils.core import setup  # pylint: disable=W402
 
 ROOT = os.path.dirname(inspect.getfile(inspect.currentframe()))
 
@@ -29,26 +29,27 @@ with open(os.path.join(ROOT, 'README')) as docs:
     params['description'] = docs.readline()
     params['long_description'] = docs.read()
 
-params['classifiers'] = [c.strip() for c in classifiers.split('\n') if c.strip()],
+params['classifiers'] = [c.strip()
+    for c in classifiers.split('\n') if c.strip()]
 
 if sys.version_info >= (3,):
     params['use_2to3'] = True
     params['convert_2to3_doctests'] = ['doc/tutorial.rst']
 
 setup(
-    name = 'ngram',
-    version = '3.2.1',
-    py_modules = ['ngram'],
-    zip_safe = True,
-    author = 'Graham Poulter, Michael Albert',
-    maintainer = 'Graham Poulter',
-    author_email = 'http://www.grahampoulter.com',
-    license = 'http://www.gnu.org/copyleft/lesser.html',
-    url = 'http://packages.python.org/ngram',
-    download_url = 'http://pypi.python.org/pypi/ngram',
-    keywords = "ngram string similarity",
-    test_suite = 'test_ngram',
-    scripts = ['scripts/csvjoin.py'],
-    platforms = ['any'],
+    name='ngram',
+    version='3.2.1',
+    py_modules=['ngram'],
+    zip_safe=True,
+    author='Graham Poulter, Michael Albert',
+    maintainer='Graham Poulter',
+    author_email='http://www.grahampoulter.com',
+    license='http://www.gnu.org/copyleft/lesser.html',
+    url='http://github.com/gpoulter/python-ngram',
+    download_url='http://pypi.python.org/pypi/ngram',
+    keywords="ngram string similarity",
+    test_suite='test_ngram',
+    scripts=['scripts/csvjoin.py'],
+    platforms=['any'],
     **params
 )
