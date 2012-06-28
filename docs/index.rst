@@ -45,7 +45,7 @@ Installation
 ============
 
 Install from `PyPI <http://pypi.python.org/pypi/ngram>`_
-using `pip installer <http://www.pip-installer.org/en/latest/index.html>`::
+using `pip installer <http://www.pip-installer.org/en/latest/index.html>`_::
 
    pip install ngram
 
@@ -72,6 +72,8 @@ NEW FEATURES
 BREAKING CHANGES
     * iconv parameter is now the "key" parameter (matches the sorted() builtin)
     * qconv parameter no longer exists: use searchitem method to query by item
+    * the `ngrams_pad` method is deprecated for new `split` and `splititem` methods
+    * the `ngrams` method is deprecated (equivalent `_split` is for internal use)
 
 OTHER IMPROVEMENTS
     * Converted Mercurial repo to Git
