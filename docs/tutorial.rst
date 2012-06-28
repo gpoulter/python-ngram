@@ -90,13 +90,13 @@ So long as the function can be found in `__main__` or imported, NGram instances 
         ...
     PicklingError: Can't pickle <function lower at ...>: it's not found as __main__.lower
     >>> import string
-    >>> H1 = ngram.NGram(['AbC'], key=string.lower)
+    >>> H1 = ngram.NGram(['ab cd'], key=string.capwords)
     >>> text = pickle.dumps(H1)
     >>> H2 = pickle.loads(text)
     >>> list(H1)
-    ['AbC']
+    ['ab cd']
     >>> list(H2)
-    ['AbC']
+    ['ab cd']
 
 The key function can perform complex transformations:
 
@@ -141,13 +141,15 @@ NGram instance.
 Multi-byte characters
 =====================
 
-Rule Of Thumb: Use Unicode strings with NGram unless you are
-certain that your encoded strings will have exactly one byte per character.
-
 When used with byte-strings, NGram will split on byte boundaries which is
-incorrect if one character uses more than one byte.
+incorrect if one character uses more than one byte.  This is mainly a problem
+in Python 2 where you often handle encoded byte strings.  In Python 3, you will
+generally be handed a unicode string.
 
-NGram works works fine with ASCII byte strings
+Rule Of Thumb: Use Unicode strings with NGram unless you are certain that your
+encoded strings are plain ASCII.
+
+In Python 2.x, NGram does work fine with ASCII byte-strings:
 
 .. doctest::
 
@@ -155,15 +157,17 @@ NGram works works fine with ASCII byte strings
     >>> list(index.ngrams(index.pad("abc")))
     ['$$a', '$ab', 'abc', 'bc$', 'c$$']
 
-But the unicode character é (code-point \xe9) would be utf-8 encoded
-as the byte-string ``'\xc3\xa9'`` (2 bytes), and thus would be split
-as a 2-byte string. The unicode string ``u'\xe9'`` will be handled
-correctly as a single character.
+But, take é (code point 0xE9) for example.  As a UTF-8 byte-string this
+takes up 2-bytes (``'\xc3\xa9'``) and so will be split into 2 characters.
+
+But as a Unicode strings, it is simply ``u'\xe9'`` (``'\xe9'`` in Py3)
+and will be handled correctly as a single character.
 
 .. doctest::
 
     >>> index = ngram.NGram(pad_len=1, N=3)
-    >>> list(index.split('é'))
-    ['$\xc3\xa9', '\xc3\xa9$']
-    >>> list(index.split(u'\xe9'))
-    [u'$\xe9$']
+    >>> import sys
+    >>> # Fails in Python 3 (non-ASCII forbidden in literal bytestrings)
+    >>> # list(index.split('é')) == ['$\xc3\xa9', '\xc3\xa9$']
+    >>> # Fails in Python 3 (the u'' syntax is removed)
+    >>> # list(index.split(u'\xe9')) == [u'$\xe9$']
