@@ -48,15 +48,16 @@ It should run on Python 2.6, Python 2.7 and Python 3.2
 
 Release Notes
 =============
-Version 3.2.1
--------------
+
+Version 3.2.1 (2012-06-28)
+--------------------------
     * Fix bug in symmetric_difference_update method
     * Update release notes / changelog
     * Update tutorial
 
 
-Version 3.2.0
--------------
+Version 3.2.0 (2012-06-25)
+--------------------------
 
 NEW FEATURES
     * "csvjoin" script performs SQL-like join between CSV tables based on string similarity.
@@ -75,8 +76,8 @@ OTHER IMPROVEMENTS
     * Corrected indentation from 3 to 4 spaces
     * Added tox to run tests on Python 2.7 and 3.2
 
-Version 3.1.0
--------------
+Version 3.1.0 (2009-12-07)
+--------------------------
 
 NEW FEATURES
     * Python 3 support via 2to3
@@ -93,8 +94,8 @@ MINOR CHANGES
     * Setuptools replaced by Distribute (for Python 3)
     * Docstrings now reStructuredText for Sphinx
 
-Version 3.0.0
--------------
+Version 3.0.0 (2009-07-03)
+--------------------------
 This was a major refactoring without back-compatibility.
 
 NEW FEATURES
@@ -109,8 +110,8 @@ IMPROVEMENTS
     * Refactored the NGram class (new method decomposition)
 
 
-Version 2.0.0b2
----------------
+Version 2.0.0b2 (2007-10-23)
+----------------------------
 This was the code committed to Subversion by Exhuma.
 
 History
