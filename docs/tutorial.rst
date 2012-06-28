@@ -108,7 +108,8 @@ Set Operations
 
 The update, discard, difference_update, intersection_update and symmetric_difference update
 methods from the builtin `set` class have been overridden to maintain the integrity of the
-NGram index when performing them.
+NGram index when performing them.  These take any iterable as argument, including another
+NGram instance.
 
 .. doctest::
     >>> G = ngram.NGram(['joe','joseph','jon','john','sally'])
@@ -121,7 +122,7 @@ NGram index when performing them.
     >>> G.difference_update(ngram.NGram(['joe']))
     >>> list(G)
     ['john', 'joseph', 'jonathan', 'jon']
-    >>> G.intersection_update(ngram.NGram(['james', 'joseph', 'joe', 'jon']))
+    >>> G.intersection_update(['james', 'joseph', 'joe', 'jon'])
     >>> list(G)
     ['joseph', 'jon']
     >>> G.symmetric_difference_update(ngram.NGram(['jimmy', 'jon']))
