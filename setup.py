@@ -13,9 +13,13 @@ ROOT = os.path.dirname(inspect.getfile(inspect.currentframe()))
 classifiers = """
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
-License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)
+Natural Language :: English
+Topic :: Text Processing
+Topic :: Text Processing :: Indexing
 Topic :: Text Processing :: Linguistic
 Operating System :: OS Independent
+Programming Language :: Python
 Programming Language :: Python :: 2
 Programming Language :: Python :: 2.6
 Programming Language :: Python :: 2.7
