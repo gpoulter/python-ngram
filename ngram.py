@@ -22,13 +22,14 @@ Lesser General Public License for more details.
 See LICENSE file or http://www.gnu.org/licenses/lgpl-2.1.html
 """
 
+
 class NGram(set):
     """A set that supports lookup by NGram string similarity.
 
-    Accepts `unicode` string or an encoded `str` of bytes. With encoded `str` the
-    splitting is on byte boundaries, which will be incorrect if the encoding uses
-    multiple bytes per character.  You must provide NGram with unicode strings if
-    the encoding would have multi-byte characters.
+    Accepts `unicode` string or an encoded `str` of bytes. With encoded `str`
+    the splitting is on byte boundaries, which will be incorrect if the
+    encoding uses multiple bytes per character.  You must provide NGram with
+    unicode strings if the encoding would have multi-byte characters.
 
     :type threshold: float in 0.0 ... 1.0
 
@@ -36,7 +37,8 @@ class NGram(set):
 
     :type warp: float in 1.0 ... 3.0
 
-    :param warp: use warp greater than 1.0 to increase the similarity of shorter string pairs.
+    :param warp: use warp greater than 1.0 to increase the similarity of
+    shorter string pairs.
 
     :type items: [item, ...]
 
@@ -52,23 +54,25 @@ class NGram(set):
 
     :type pad_char: str or unicode
 
-    :param pad_char: character to use for padding.  Default is '$', but consider using the\
-    non-breaking space character, ``u'\\xa0'`` (``u"\\u00A0"``).
+    :param pad_char: character to use for padding.  Default is '$', but
+    consider using the\ non-breaking space character, ``u'\\xa0'``
+    (``u"\\u00A0"``).
 
     :type key: function(item) -> str/unicode
 
-    :param key: Function to convert items into string, default is no conversion.
+    :param key: Function to convert items into string, default is no
+    conversion.
 
     Instance variables:
 
-    :ivar _grams: For each n-gram, the items containing it and the number of times\
-    the n-gram occurs in the item as ``{str:{item:int, ...}, ...}``.
+    :ivar _grams: For each n-gram, the items containing it and the number of
+    times\ the n-gram occurs in the item as ``{str:{item:int, ...}, ...}``.
 
     :ivar length: maps items to length of the padded string representations as
     ``{item:int, ...}``.
     """
 
-    def __init__(self, items=[], threshold=0.0, warp=1.0, key=None,
+    def __init__(self, items=None, threshold=0.0, warp=1.0, key=None,
                     N=3, pad_len=None, pad_char='$', **kwargs):
         super(NGram, self).__init__()
         if not (0 <= threshold <= 1):
@@ -80,10 +84,10 @@ class NGram(set):
         if not N >= 1:
             raise ValueError("N out of range (should be N >= 1): " + repr(N))
         if pad_len is None:
-            pad_len = N-1
+            pad_len = N - 1
         if not (0 <= pad_len < N):
             raise ValueError("pad_len out of range: " + repr(pad_len))
-        if not len(pad_char)==1:
+        if not len(pad_char) == 1:
             raise ValueError(
                 "pad_char is not single character: " + repr(pad_char))
         if key is not None and not callable(key):
@@ -93,7 +97,7 @@ class NGram(set):
         self.N = N
         self._pad_len = pad_len
         self._pad_char = pad_char
-        self._padding = pad_char * pad_len # derive a padding string
+        self._padding = pad_char * pad_len  # derive a padding string
         # compatibility shim for 3.1 iconv parameter
         if 'iconv' in kwargs:
             self._key = kwargs.pop('iconv')
@@ -104,12 +108,13 @@ class NGram(set):
         self._key = key
         self._grams = {}
         self.length = {}
-        self.update(items)
+        if items:
+            self.update(items)
 
     def __reduce__(self):
-        """Return state information for pickling, no references to this instance.
-        The key function must be None, a builtin function, or a named
-        module-level function.
+        """Return state information for pickling, no references to this
+        instance.  The key function must be None, a builtin function, or
+        a named module-level function.
 
         >>> from ngram import NGram
         >>> n = NGram([0xDEADBEEF, 0xBEEF], key=hex)
@@ -168,7 +173,7 @@ class NGram(set):
         ['ham', 'ame', 'meg', 'egg']
         """
         for i in range(len(string) - self.N + 1):
-            yield string[i:i+self.N]
+            yield string[i:i + self.N]
 
     # compatibility with 3.1
     ngrams = _split
@@ -198,7 +203,7 @@ class NGram(set):
         return self.split(self.key(item))
 
     def add(self, item):
-        """Add an item to the N-gram index (only if it has not already been added).
+        """Add an item to the N-gram index (if it has not already been added).
 
         >>> from ngram import NGram
         >>> n = NGram()
@@ -240,7 +245,7 @@ class NGram(set):
         """Retrieve the subset of items that share n-grams the query string.
 
         :param query: look up items that share N-grams with this string.
-        :return: dictionary from matched string to the number of shared N-grams.
+        :return: mapping from matched string to the number of shared N-grams.
 
         >>> from ngram import NGram
         >>> n = NGram(["ham","spam","eggs"])
@@ -256,7 +261,7 @@ class NGram(set):
             try:
                 for match, count in self._grams[ngram].items():
                     remaining.setdefault(ngram, {}).setdefault(match, count)
-                    # match up to as many occurrences of ngram as exist in the matched string
+                    # match as many occurrences as exist in matched string
                     if remaining[ngram][match] > 0:
                         remaining[ngram][match] -= 1
                         shared.setdefault(match, 0)
@@ -276,14 +281,14 @@ class NGram(set):
         >>> n.searchitem((2, "SPA"))
         [((0, 'SPAM'), 0.375), ((1, 'SPAN'), 0.375)]
         """
-        return self.search(self.key(item))
+        return self.search(self.key(item), threshold)
 
     def search(self, query, threshold=None):
         """Search the index for items whose key exceeds threshold
         similarity to the query string.
 
-        :param query: returned items will have at least `threshold` similarity to
-        the query string.
+        :param query: returned items will have at least `threshold` similarity
+        to the query string.
 
         :return: list of pairs of (item, similarity) by decreasing similarity.
 
@@ -306,7 +311,7 @@ class NGram(set):
             if similarity >= threshold:
                 results.append((match, similarity))
         # Sort results by decreasing similarity
-        results.sort(key=lambda x:x[1], reverse=True)
+        results.sort(key=lambda x: x[1], reverse=True)
         return results
 
     def finditem(self, item, threshold=None):
@@ -314,7 +319,8 @@ class NGram(set):
         nothing exceeds the threshold.
 
         >>> from ngram import NGram
-        >>> n = NGram([(0, "Spam"), (1, "Ham"), (2, "Eggsy")], key=lambda x:x[1].lower())
+        >>> n = NGram([(0, "Spam"), (1, "Ham"), (2, "Eggsy")],
+        ...     key=lambda x:x[1].lower())
         >>> n.finditem((3, 'Hom'))
         (1, 'Ham')
         >>> n.finditem((4, "Oggsy"))
@@ -366,11 +372,12 @@ class NGram(set):
         >>> NGram.ngram_similarity(3, 4)
         0.75
         """
-        if abs(warp-1.0) < 1e-9:
+        if abs(warp - 1.0) < 1e-9:
             similarity = float(samegrams) / allgrams
         else:
             diffgrams = float(allgrams - samegrams)
-            similarity = (allgrams**warp - diffgrams**warp) / (allgrams**warp)
+            similarity = ((allgrams ** warp - diffgrams ** warp)
+                    / (allgrams ** warp))
         return similarity
 
     @staticmethod
@@ -463,6 +470,6 @@ class NGram(set):
         >>> list(n)
         ['eggs', 'ham']
         """
-        intersection = self.intersection(other) # record intersection of sets
-        self.update(other) # add items present in other
-        self.difference_update(intersection) # remove items present in both
+        intersection = self.intersection(other)   # record intersection of sets
+        self.update(other)  # add items present in other
+        self.difference_update(intersection)  # remove items present in both
