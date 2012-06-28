@@ -103,6 +103,32 @@ The key function can perform complex transformations:
     [(('Joe', 'Bloggs'), 0.25)]
 
 
+Set Operations
+==============
+
+The update, discard, difference_update, intersection_update and symmetric_difference update
+methods from the builtin `set` class have been overridden to maintain the integrity of the
+NGram index when performing them.
+
+.. doctest::
+    >>> G = ngram.NGram(['joe','joseph','jon','john','sally'])
+    >>> G.update(['jonathan'])
+    >>> list(G)
+    ['john', 'joseph', 'joe', 'jonathan', 'sally', 'jon']
+    >>> G.discard('sally')
+    >>> list(G)
+    ['john', 'joseph', 'joe', 'jonathan', 'jon']
+    >>> G.difference_update(ngram.NGram(['joe']))
+    >>> list(G)
+    ['john', 'joseph', 'jonathan', 'jon']
+    >>> G.intersection_update(ngram.NGram(['james', 'joseph', 'joe', 'jon']))
+    >>> list(G)
+    ['joseph', 'jon']
+    >>> G.symmetric_difference_update(ngram.NGram(['jimmy', 'jon']))
+    >>> list(G)
+    ['jimmy', 'joseph']
+
+
 Multi-byte characters
 =====================
 
