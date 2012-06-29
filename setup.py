@@ -44,7 +44,7 @@ if sys.version_info >= (3,):
 
 setup(
     name='ngram',
-    version='3.2.1',
+    version='3.3.0',
     license='LGPLv3+',
     py_modules=['ngram'],
     zip_safe=True,
