@@ -12,52 +12,23 @@ Contents:
 Introduction
 ============
 
-The NGram class extends the Python set class with the ability
-to search for set members ranked by their N-Gram string similarity
-to the query. There are also methods for comparing a pair of strings.
-
-NGram is hosted at the `Python Package Index
-<http://pypi.python.org/pypi/ngram>`_, and this is the online
-documentation.
-
-How does it work?
-=================
-
-The set stores arbitrary items by using a specified "key" function
-to produce a string representation of set members suitable for N-gram indexing.
-By default it simply calls str() on the objects.
-
-The N-grams are obtained by splitting strings into overlapping substrings
-of N (usually N=3) characters in length and association is maintained from
-each distinct N-Gram to items that use it.
-
-To find items similar to a query string, it splits the query into N-grams,
-collects all items sharing at least one N-gram with the query,
-and ranks the items by score based on the ratio of shared to unshared
-N-grams between strings.
-
-Installation
-============
-
-Install from `PyPI <http://pypi.python.org/pypi/ngram>`_
-using `pip installer <http://www.pip-installer.org/en/latest/index.html>`_::
-
-   pip install ngram
-
-It should run on Python 2.6, Python 2.7 and Python 3.2
+.. include:: ../README
 
 Release Notes
 =============
 
-Version 3.2.1 (2012-06-28)
---------------------------
+Version 3.2.1
+-------------
+Released 2012-06-28
+
     * Fix bug in symmetric_difference_update method
     * Update release notes / changelog
     * Update tutorial
 
 
-Version 3.2.0 (2012-06-25)
---------------------------
+Version 3.2.0
+-------------
+Released 2012-06-25
 
 NEW FEATURES
     * "csvjoin" script performs SQL-like join between CSV tables based on string similarity.
@@ -76,8 +47,9 @@ OTHER IMPROVEMENTS
     * Corrected indentation from 3 to 4 spaces
     * Added tox to run tests on Python 2.7 and 3.2
 
-Version 3.1.0 (2009-12-07)
---------------------------
+Version 3.1.0
+-------------
+Released 2009-12-07
 
 NEW FEATURES
     * Python 3 support via 2to3
@@ -94,8 +66,10 @@ MINOR CHANGES
     * Setuptools replaced by Distribute (for Python 3)
     * Docstrings now reStructuredText for Sphinx
 
-Version 3.0.0 (2009-07-03)
---------------------------
+Version 3.0.0
+-------------
+Released 2009-07-03.
+
 This was a major refactoring without back-compatibility.
 
 NEW FEATURES
@@ -110,8 +84,10 @@ IMPROVEMENTS
     * Refactored the NGram class (new method decomposition)
 
 
-Version 2.0.0b2 (2007-10-23)
-----------------------------
+Version 2.0.0b2
+---------------
+Released 2007-10-23.
+
 This was the code committed to Subversion by Exhuma.
 
 History
