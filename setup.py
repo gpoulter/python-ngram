@@ -6,14 +6,16 @@ import sys
 try:
     from setuptools import setup
 except ImportError:
-    from distutils.core import setup  # pylint: disable=W402
+    from distutils.core import setup  # pylint: disable=W402,W801
 
 ROOT = os.path.dirname(inspect.getfile(inspect.currentframe()))
 
 classifiers = """
 Development Status :: 5 - Production/Stable
 Intended Audience :: Developers
-License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)
+License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
+License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
+License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
 Natural Language :: English
 Topic :: Text Processing
 Topic :: Text Processing :: Indexing
