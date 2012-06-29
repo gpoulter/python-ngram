@@ -1,19 +1,22 @@
-The NGram class extents the Python set class with the ability
-to search for set members ranked by their N-Gram string similarity
-to the query. There are also methods for comparing a pair of strings.
+The NGram class extends the Python 'set' class with efficient
+fuzzy search for members by means of an N-gram similarity measure.
+It also has static methods to compare a pair of strings.
+
+The N-grams are character based not word-based, and the class does not
+implement a language model, merely searching for members by string similarity.
 
 There is [documentation][1] and a [tutorial][2].
 
 How does it work?
 =================
 
-The set stores arbitrary items by using a specified "key" function
-to produce a string representation of set members suitable for N-gram indexing.
-By default it simply calls str() on the objects.
+The set stores arbitrary items, but either calls str() on the items
+or applies a specified "key" function to produce a string representation
+to use for N-gram indexing.
 
-The N-grams are obtained by splitting strings into overlapping substrings
-of N (usually N=3) characters in length and association is maintained from
-each distinct N-Gram to items that use it.
+It pads the string with a specified dummy character, then splits into
+overlapping substrings of N (default N=3) characters in length and
+associates each N-gram to the items that use it.
 
 To find items similar to a query string, it splits the query into N-grams,
 collects all items sharing at least one N-gram with the query,
@@ -25,14 +28,18 @@ History
 
 In 2007, Michel Albert (exhuma) wrote the python-ngram module based on Perl's
 [String::Trigram][3] module by Tarek Ahmed, and committed the code for 2.0.0b2 to
-Sourceforge subversion repo.
+a now-disused [Sourceforge][4] subversion repo.
 
-Since late 2008 python-ngram development has been continued Graham Poulter,
-adding features, documentation, performance improvements and Python 3 support.
-The repo was first moved to Mercurial repo on Google Code, but primary
-development now takes place here on GitHub.
+Since late 2008, Graham Poulter has maintained python-ngram, initially refactoring
+it to build on the `set` class, and also adding features, documentation, tests,
+performance improvements and Python 3 support.
+
+Primary development takes place on [GitHub][5], but changes are also pushed
+to the earlier repo on [Google Code][6].
 
 [1]: http://packages.python.org/ngram/
 [2]: http://packages.python.org/ngram/tutorial.html
 [3]: http://search.cpan.org/dist/String-Trigram/
-
+[4]: https://sourceforge.net/projects/python-ngram/
+[5]: http://github.com/gpoulter/python-ngram
+[6]: http://code.google.com/p/python-ngram/
