@@ -17,6 +17,23 @@ Introduction
 Release Notes
 =============
 
+Version 3.3.0
+-------------
+Released 2012-06-29
+
+NEW FEATURES
+    * Correct support for remaining set methods: `pop`, `clear`, `union`, `intersection`, `difference`, `symmetric_difference`
+    * Can provide alternate `items` to the `copy` method
+
+IMPROVEMENTS
+    * Update license from LGPL to LGPL version 3
+    * Revised readme to work with GitHub, PyPI and generated docs.
+    * Tox to run all doctests, pass under 2.7 and 3.2
+
+BUG FIXES
+    * Fix unused threshold param in `searchitem` method
+    * Fix intersection_update to accept multiple other iterables
+
 Version 3.2.1
 -------------
 Released 2012-06-28
@@ -24,7 +41,6 @@ Released 2012-06-28
     * Fix bug in symmetric_difference_update method
     * Update release notes / changelog
     * Update tutorial
-
 
 Version 3.2.0
 -------------
@@ -106,8 +122,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-:download:`GPL <../COPYING>`
-:download:`LGPL <../COPYING.LESSER>`
+ * :download:`Text of GPLv3 <../COPYING>`
+ * :download:`Text of LGPLv3 <../COPYING.LESSER>`
 
 Indices and tables
 ==================
