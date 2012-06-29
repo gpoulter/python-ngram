@@ -57,7 +57,8 @@ class NGram(set):
     :type key: function(item) -> str/unicode
 
     :param key: Function to convert items into string, default is no
-    conversion.
+    conversion.  Recommended to use `str` or `unicode` for non-string items.
+    Using anonymous function prevents NGram class from being pickled.
 
     Instance variables:
 
@@ -123,9 +124,11 @@ class NGram(set):
         return NGram, (list(self), self.threshold, self.warp, self._key,
                        self.N, self._pad_len, self._pad_char)
 
-    def copy(self):
-        """Return a shallow copy of the NGram object.  That is, instantiate
-        a new NGram from references to items stored in this one.
+    def copy(self, items=None):
+        """Return a new NGram object with the same settings, and
+        referencing the same items.  Copy is shallow in that
+        each item is not recursively copied.   Optionally specify
+        alternate items to populate the copy.
 
         >>> from ngram import NGram
         >>> from copy import deepcopy
@@ -136,8 +139,12 @@ class NGram(set):
         ['eggs', 'spam']
         >>> list(m)
         ['eggs', 'ham', 'spam']
+        >>> p = n.copy(['foo', 'bar'])
+        >>> list(p)
+        ['foo', 'bar']
         """
-        return NGram(self, self.threshold, self.warp, self._key,
+        return NGram(items if items is not None else self,
+                     self.threshold, self.warp, self._key,
                      self.N, self._pad_len, self._pad_char)
 
     def key(self, item):
@@ -223,7 +230,7 @@ class NGram(set):
                 self._grams[ngram][item] += 1
 
     def remove(self, item):
-        """Remove an item from the index. Inverts the add operation.
+        """Remove an item from the set. Inverts the add operation.
 
         >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
@@ -236,6 +243,21 @@ class NGram(set):
             del self.length[item]
             for ngram in self.splititem(item):
                 del self._grams[ngram][item]
+
+    def pop(self):
+        """Remove and return an arbitrary set element.
+        Raises KeyError if the set is empty.
+
+        >>> from ngram import NGram
+        >>> n = NGram(['spam', 'eggs'])
+        >>> n.pop()
+        'eggs'
+        """
+        item = super(NGram, self).pop()
+        del self.length[item]
+        for ngram in self.splititem(item):
+            del self._grams[ngram][item]
+        return item
 
     def items_sharing_ngrams(self, query):
         """Retrieve the subset of items that share n-grams the query string.
@@ -422,7 +444,9 @@ class NGram(set):
             self.add(item)
 
     def discard(self, item):
-        """If `item` is a member of the set, remove it.
+        """Remove an element from a set if it is a member.
+
+        If the element is not a member, do nothing.
 
         >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
@@ -434,6 +458,43 @@ class NGram(set):
         if item in self:
             self.remove(item)
 
+    def clear(self):
+        """Remove all elements from this set.
+
+        >>> from ngram import NGram
+        >>> n = NGram(['spam', 'eggs'])
+        >>> list(n)
+        ['eggs', 'spam']
+        >>> n.clear()
+        >>> list(n)
+        []
+        """
+        super(NGram, self).clear()
+        self._grams = {}
+        self.length = {}
+
+    def union(self, *others):
+        """Return the union of two or more sets as a new set.
+
+        >>> from ngram import NGram
+        >>> a = NGram(['spam', 'eggs'])
+        >>> b = NGram(['spam', 'ham'])
+        >>> list(a.union(b))
+        ['eggs', 'ham', 'spam']
+        """
+        return self.copy(super(NGram, self).union(*others))
+
+    def difference(self, *others):
+        """Return the difference of two or more sets as a new set.
+
+        >>> from ngram import NGram
+        >>> a = NGram(['spam', 'eggs'])
+        >>> b = NGram(['spam', 'ham'])
+        >>> list(a.difference(b))
+        ['eggs']
+        """
+        return self.copy(super(NGram, self).difference(*others))
+
     def difference_update(self, other):
         """Remove from this set all elements from `other` set.
 
@@ -444,11 +505,22 @@ class NGram(set):
         >>> list(n)
         ['eggs']
         """
-        for x in other:
-            self.discard(x)
+        for item in other:
+            self.discard(item)
 
-    def intersection_update(self, other):
-        """Update the set with the intersection of itself and `other`.
+    def intersection(self, *others):
+        """Return the intersection of two or more sets as a new set.
+
+        >>> from ngram import NGram
+        >>> a = NGram(['spam', 'eggs'])
+        >>> b = NGram(['spam', 'ham'])
+        >>> list(a.intersection(b))
+        ['spam']
+        """
+        return self.copy(super(NGram, self).intersection(*others))
+
+    def intersection_update(self, *others):
+        """Update the set with the intersection of itself and other sets.
 
         >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
@@ -457,7 +529,18 @@ class NGram(set):
         >>> list(n)
         ['spam']
         """
-        self.difference_update([x for x in self if x not in other])
+        self.difference_update(super(NGram, self).difference(*others))
+
+    def symmetric_difference(self, other):
+        """Return the symmetric difference of two sets as a new set.
+
+        >>> from ngram import NGram
+        >>> a = NGram(['spam', 'eggs'])
+        >>> b = NGram(['spam', 'ham'])
+        >>> list(a.symmetric_difference(b))
+        ['eggs', 'ham']
+        """
+        return self.copy(super(NGram, self).symmetric_difference(other))
 
     def symmetric_difference_update(self, other):
         """Update the set with the symmetric difference of itself and `other`.
@@ -469,6 +552,6 @@ class NGram(set):
         >>> list(n)
         ['eggs', 'ham']
         """
-        intersection = self.intersection(other)   # record intersection of sets
+        intersection = super(NGram, self).intersection(other)
         self.update(other)  # add items present in other
         self.difference_update(intersection)  # remove items present in both
