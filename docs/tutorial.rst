@@ -32,11 +32,11 @@ and :meth:`~ngram.NGram.find` to only return the most similar item:
 Transforming items
 ==================
 
-By default, non-string items are indexed using their str() representation, but this
-can be overridden with a `key` function - just like the `key` parameter to the `sorted`
-builtin.
+By default no transformation is done, so items must be strings. By passing a `key` function,
+similar to the `key` parameter of the `sorted` builtin, arbitrary items can be indexed.
+For non-string items, generally pass `str` or `unicode` as the key function.
 
-Here we define a key function to index the lower-case version of a string.  Use
+Below, we define a key function to index the lower-case version of a string, and use
 the key, pad and ngrams methods to examine the internal representations:
 
 .. doctest::
