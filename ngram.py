@@ -277,8 +277,9 @@ class NGram(set):
         :return: list of pairs of (item, similarity) by decreasing similarity.
 
         >>> from ngram import NGram
-        >>> n = NGram([(0, "SPAM"), (1, "SPAN"), (2, "EG")], key=lambda x:x[1])
-        >>> n.searchitem((2, "SPA"))
+        >>> n = NGram([(0, "SPAM"), (1, "SPAN"), (2, "EG"),
+        ... (3, "SPANN")], key=lambda x:x[1])
+        >>> n.searchitem((2, "SPA"), 0.35)
         [((0, 'SPAM'), 0.375), ((1, 'SPAN'), 0.375)]
         """
         return self.search(self.key(item), threshold)
@@ -319,12 +320,13 @@ class NGram(set):
         nothing exceeds the threshold.
 
         >>> from ngram import NGram
-        >>> n = NGram([(0, "Spam"), (1, "Ham"), (2, "Eggsy")],
+        >>> n = NGram([(0, "Spam"), (1, "Ham"), (2, "Eggsy"), (3, "Egggsy")],
         ...     key=lambda x:x[1].lower())
         >>> n.finditem((3, 'Hom'))
         (1, 'Ham')
         >>> n.finditem((4, "Oggsy"))
         (2, 'Eggsy')
+        >>> n.finditem((4, "Oggsy"), 0.8)
         """
         results = self.searchitem(item, threshold)
         if results:
@@ -341,6 +343,7 @@ class NGram(set):
         'Ham'
         >>> n.find("Spom")
         'Spam'
+        >>> n.find("Spom", 0.8)
         """
         results = self.search(query, threshold)
         if results:
