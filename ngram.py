@@ -20,12 +20,11 @@ from __future__ import division
 
 
 class NGram(set):
-    """A set that supports lookup by NGram string similarity.
+    """A set that supports searching for members by N-gram string similarity.
 
-    Accepts `unicode` string or an encoded `str` of bytes. With encoded `str`
-    the splitting is on byte boundaries, which will be incorrect if the
-    encoding uses multiple bytes per character.  You must provide NGram with
-    unicode strings if the encoding would have multi-byte characters.
+    In Python 2, items should be `unicode` string or a plain ASCII `str`
+    (bytestring) - do not use UTF-8 or other multi-byte encodings, because
+    multi-byte characters will be split up.
 
     :type threshold: float in 0.0 ... 1.0
 
@@ -33,7 +32,7 @@ class NGram(set):
 
     :type warp: float in 1.0 ... 3.0
 
-    :param warp: use warp greater than 1.0 to increase the similarity of
+    :param warp: use warp greater than 1.0 to increase the similarity of \
     shorter string pairs.
 
     :type items: [item, ...]
@@ -50,23 +49,23 @@ class NGram(set):
 
     :type pad_char: str or unicode
 
-    :param pad_char: character to use for padding.  Default is '$', but
-    consider using the\ non-breaking space character, ``u'\\xa0'``
+    :param pad_char: character to use for padding.  Default is '$', but \
+    consider using the\ non-breaking space character, ``u'\\xa0'`` \
     (``u"\\u00A0"``).
 
     :type key: function(item) -> str/unicode
 
-    :param key: Function to convert items into string, default is no
-    conversion.  Recommended to use `str` or `unicode` for non-string items.
+    :param key: Function to convert items into string, default is no \
+    conversion.  Recommended to use `str` or `unicode` for non-string items. \
     Using anonymous function prevents NGram class from being pickled.
 
     Instance variables:
 
-    :ivar _grams: For each n-gram, the items containing it and the number of
+    :ivar _grams: For each n-gram, the items containing it and the number of \
     times\ the n-gram occurs in the item as ``{str:{item:int, ...}, ...}``.
 
-    :ivar length: maps items to length of the padded string representations as
-    ``{item:int, ...}``.
+    :ivar length: maps items to length of the padded string representations \
+    as ``{item:int, ...}``.
     """
 
     def __init__(self, items=None, threshold=0.0, warp=1.0, key=None,
@@ -306,8 +305,8 @@ class NGram(set):
         """Search the index for items whose key exceeds threshold
         similarity to the query string.
 
-        :param query: returned items will have at least `threshold` similarity
-        to the query string.
+        :param query: returned items will have at least `threshold` \
+        similarity to the query string.
 
         :return: list of pairs of (item, similarity) by decreasing similarity.
 
@@ -373,8 +372,8 @@ class NGram(set):
     def ngram_similarity(samegrams, allgrams, warp=1.0):
         """Similarity for two sets of n-grams.
 
-        :note: ``similarity = (a**e - d**e)/a**e`` where `a` is "all n-grams",
-        `d` is "different n-grams" and `e` is the warp.
+        :note: ``similarity = (a**e - d**e)/a**e`` where `a` is \
+        "all n-grams", `d` is "different n-grams" and `e` is the warp.
 
         :param samegrams: number of n-grams shared by the two strings.
 
