@@ -32,7 +32,6 @@ Programming Language :: Python :: 3.2
 params = dict()
 
 with open(os.path.join(ROOT, 'README')) as docs:
-    params['description'] = docs.readline()
     params['long_description'] = docs.read()
 
 params['classifiers'] = [c.strip()
@@ -44,6 +43,7 @@ if sys.version_info >= (3,):
 
 setup(
     name='ngram',
+    description='A `set` subclass providing fuzzy search based on N-grams.',
     version='3.3.0',
     license='LGPLv3+',
     py_modules=['ngram'],
