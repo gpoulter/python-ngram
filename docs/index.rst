@@ -90,18 +90,6 @@ Released 2007-10-23.
 
 This was the code committed to Subversion by Exhuma.
 
-History
-=======
-
-In 2007, Michel Albert (exhuma) wrote the python-ngram module based on the Perl
-String::Trigram module by Tarek Ahmed, and committed the code for 2.0.0b2 to
-Sourceforge subversion repo.
-
-Since late 2008 python-ngram development has been continued Graham Poulter,
-adding features, documentation, performance improvements and Python 3 support.
-The repo was first moved to a Mercurial repo on Google Code, but primary
-development now takes place here on GitHub.
-
 License
 =======
 
