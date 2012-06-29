@@ -40,21 +40,19 @@ params['classifiers'] = [c.strip()
 
 if sys.version_info >= (3,):
     params['use_2to3'] = True
-    params['convert_2to3_doctests'] = ['doc/tutorial.rst']
+    params['convert_2to3_doctests'] = ['docs/tutorial.rst', 'ngram.py']
 
 setup(
     name='ngram',
     version='3.2.1',
+    license='LGPLv3+',
     py_modules=['ngram'],
     zip_safe=True,
     author='Graham Poulter, Michael Albert',
     maintainer='Graham Poulter',
-    author_email='http://www.grahampoulter.com',
-    license='http://www.gnu.org/copyleft/lesser.html',
     url='http://github.com/gpoulter/python-ngram',
     download_url='http://pypi.python.org/pypi/ngram',
-    keywords="ngram string similarity",
-    test_suite='test_ngram',
+    keywords="ngram set string text similarity",
     scripts=['scripts/csvjoin.py'],
     platforms=['any'],
     **params
