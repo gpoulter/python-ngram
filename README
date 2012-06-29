@@ -20,13 +20,14 @@ It should run on Python 2.6, Python 2.7 and Python 3.2
 How does it work?
 =================
 
-The set stores arbitrary items, but either calls str() on the items
-or applies a specified "key" function to produce a string representation
-to use for N-gram indexing.
+The set stores arbitrary items, but for non-string items a `key` function
+(such as `str`) must be specified to provide a string represenation.  The key
+function can also be used to normalise string items (e.g. lower-casing) prior
+to N-gram indexing.
 
-It pads the string with a specified dummy character, then splits into
-overlapping substrings of N (default N=3) characters in length and
-associates each N-gram to the items that use it.
+To index a string it pads the string with a specified dummy character, then
+splits it into overlapping substrings of N (default N=3) characters in length
+and associates each N-gram to the items that use it.
 
 To find items similar to a query string, it splits the query into N-grams,
 collects all items sharing at least one N-gram with the query,
