@@ -1,0 +1,7 @@
+include COPYING
+include COPYING.LESSER
+include tox.ini
+graft docs
+prune docs/_build
+graft tests
+global-exclude *.pyc
