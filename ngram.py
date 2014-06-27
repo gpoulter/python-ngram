@@ -59,6 +59,14 @@ class NGram(set):
     conversion.  Recommended to use `str` or `unicode` for non-string items. \
     Using anonymous function prevents NGram class from being pickled.
 
+    :param tfidf_zero: Max significant ngram frequency. If ngram freq is larger than this value library considers it
+    frequent and tf-idf score of this ngram doesn't matter.
+
+    :param tfidf_ranking: Enable/disable tfidf ranking.
+
+    :param rank_combining_method: Method to combine different rankings (cosine similarity & tf-idf ranks of individual
+    ngrams) together. This parameter can be 'max' or 'avg'.
+
     Instance variables:
 
     :ivar _grams: For each n-gram, the items containing it and the number of \
@@ -69,7 +77,7 @@ class NGram(set):
     """
 
     def __init__(self, items=None, threshold=0.0, warp=1.0, key=None,
-                    N=3, pad_len=None, pad_char='$', **kwargs):
+                    N=3, pad_len=None, pad_char='$', tfidf_zero=10, tfidf_ranking=False, rank_combining_method='max', **kwargs):
         super(NGram, self).__init__()
         if not (0 <= threshold <= 1):
             raise ValueError("threshold out of range 0.0 to 1.0: "
@@ -101,6 +109,14 @@ class NGram(set):
         if 'qconv' in kwargs:
             raise ValueError('qconv query conversion parameter unsupported. '
             'Please process query to a string before calling .search')
+        # TF-IDF settings
+        self.__tfidf = tfidf_ranking
+        self.__zero = tfidf_zero
+        if rank_combining_method == 'max':
+            self.__combine = max
+        elif rank_combining_method == 'avg':
+            self.__combine = lambda x: sum(x)/len(x)
+        # Index
         self._key = key
         self._grams = {}
         self.length = {}
@@ -271,12 +287,16 @@ class NGram(set):
         """
         # From matched string to number of N-grams shared with query string
         shared = {}
+        # Ngram stats
+        ngrams = []
         # Dictionary mapping n-gram to string to number of occurrences of that
         # ngram in the string that remain to be matched.
         remaining = {}
         for ngram in self.split(query):
             try:
-                for match, count in self._grams[ngram].items():
+                all_matches = self._grams[ngram]
+                for match, count in all_matches.items():
+                    ngrams.append((match, ngram, len(all_matches)))
                     remaining.setdefault(ngram, {}).setdefault(match, count)
                     # match as many occurrences as exist in matched string
                     if remaining[ngram][match] > 0:
@@ -285,7 +305,13 @@ class NGram(set):
                         shared[match] += 1
             except KeyError:
                 pass
-        return shared
+        # merge two dicts
+        result = {}
+        for key, count in shared.iteritems():
+            result[key] = (count, [])
+        for key, ngram, freq in ngrams:
+            result[key][1].append((ngram, freq))
+        return result
 
     def searchitem(self, item, threshold=None):
         """Search the index for items whose key exceeds the threshold
@@ -322,10 +348,12 @@ class NGram(set):
         threshold = threshold if threshold is not None else self.threshold
         results = []
         # Identify possible results
-        for match, samegrams in self.items_sharing_ngrams(query).items():
+        items_sharing_ngrams = self.items_sharing_ngrams(query)
+        for match, (samegrams, ngrams) in items_sharing_ngrams.items():
             allgrams = (len(self.pad(query))
                         + self.length[match] - (2 * self.N) - samegrams + 2)
             similarity = self.ngram_similarity(samegrams, allgrams, self.warp)
+            similarity = self.ngram_tfidfscore(similarity, ngrams)
             if similarity >= threshold:
                 results.append((match, similarity))
         # Sort results by decreasing similarity
@@ -367,6 +395,18 @@ class NGram(set):
             return results[0][0]
         else:
             return None
+
+    def ngram_tfidfscore(self, current_rank, ngrams):
+        # fastpath
+        if self.__tfidf == False:
+            return current_rank
+        from math import log
+        results = [current_rank]
+        for ngram, freq in ngrams:
+            score = 1 + log(1.0/freq, self.__zero)
+            if score > 0:
+                results.append(score)
+        return self.__combine(results)
 
     @staticmethod
     def ngram_similarity(samegrams, allgrams, warp=1.0):
@@ -554,3 +594,4 @@ class NGram(set):
         intersection = super(NGram, self).intersection(other)
         self.update(other)  # add items present in other
         self.difference_update(intersection)  # remove items present in both
+
