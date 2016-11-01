@@ -240,7 +240,7 @@ class NGram(set):
         if item in self:
             super(NGram, self).remove(item)
             del self.length[item]
-            for ngram in self.splititem(item):
+            for ngram in set(self.splititem(item)):
                 del self._grams[ngram][item]
 
     def pop(self):
@@ -254,7 +254,7 @@ class NGram(set):
         """
         item = super(NGram, self).pop()
         del self.length[item]
-        for ngram in self.splititem(item):
+        for ngram in set(self.splititem(item)):
             del self._grams[ngram][item]
         return item
 
