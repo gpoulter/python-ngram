@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 from __future__ import division
-
+import warnings
 
 class NGram(set):
     """A set that supports searching for members by N-gram string similarity.
@@ -97,6 +97,7 @@ class NGram(set):
         # compatibility shim for 3.1 iconv parameter
         if 'iconv' in kwargs:
             self._key = kwargs.pop('iconv')
+            warnings.warn('"iconv" parameter deprecated, use "key" instead.', DeprecationWarning)
         # no longer support 3.1 qconv parameter
         if 'qconv' in kwargs:
             raise ValueError('qconv query conversion parameter unsupported. '
@@ -177,9 +178,6 @@ class NGram(set):
         for i in range(len(string) - self.N + 1):
             yield string[i:i + self.N]
 
-    # compatibility with 3.1
-    ngrams = _split
-
     def split(self, string):
         """Pads a string and iterates over its ngrams.
 
@@ -190,8 +188,15 @@ class NGram(set):
         """
         return self._split(self.pad(string))
 
-    # compatibility with 3.1
-    ngrams_pad = split
+    def ngrams(self, string):
+        """Alias for 3.1 compatibility, please set pad_len=0 and use split.""" 
+        warnings.warn('Method ngram deprecated, use method split with pad_len=0 instead.', DeprecationWarning)
+        return self._split(string)
+
+    def ngrams_pad(self, string):
+        """Alias for 3.1 compatibility, please use split instead."""
+        warnings.warn('Method ngrams_pad deprecated, use method split instead.', DeprecationWarning)
+        return self.split(string)
 
     def splititem(self, item):
         """Pads the string key of an item and iterates over its ngrams.
