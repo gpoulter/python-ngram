@@ -114,12 +114,12 @@ class NGram(set):
         a named module-level function.
 
         >>> from ngram import NGram
-        >>> n = NGram([0xDEADBEEF, 0xBEEF], key=hex)
+        >>> n = NGram([0xDEAD, 0xBEEF], key=hex)
         >>> import pickle
         >>> p = pickle.dumps(n)
         >>> m = pickle.loads(p)
-        >>> list(m)
-        [3735928559, 48879]
+        >>> sorted(list(m))
+        [48879, 57005]
         """
         return NGram, (list(self), self.threshold, self.warp, self._key,
                        self.N, self._pad_len, self._pad_char)
@@ -135,13 +135,13 @@ class NGram(set):
         >>> n = NGram(['eggs', 'spam'])
         >>> m = n.copy()
         >>> m.add('ham')
-        >>> list(n)
+        >>> sorted(list(n))
         ['eggs', 'spam']
-        >>> list(m)
+        >>> sorted(list(m))
         ['eggs', 'ham', 'spam']
         >>> p = n.copy(['foo', 'bar'])
-        >>> list(p)
-        ['foo', 'bar']
+        >>> sorted(list(p))
+        ['bar', 'foo']
         """
         return NGram(items if items is not None else self,
                      self.threshold, self.warp, self._key,
@@ -218,7 +218,7 @@ class NGram(set):
         >>> list(n)
         ['ham']
         >>> n.add("spam")
-        >>> list(n)
+        >>> sorted(list(n))
         ['ham', 'spam']
         """
         if item not in self:
@@ -254,8 +254,9 @@ class NGram(set):
 
         >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
-        >>> n.pop()
-        'eggs'
+        >>> x = n.pop()
+        >>> len(n)
+        1
         """
         item = super(NGram, self).pop()
         del self.length[item]
@@ -271,8 +272,8 @@ class NGram(set):
 
         >>> from ngram import NGram
         >>> n = NGram(["ham","spam","eggs"])
-        >>> n.items_sharing_ngrams("mam")
-        {'ham': 2, 'spam': 2}
+        >>> sorted(n.items_sharing_ngrams("mam").items())
+        [('ham', 2), ('spam', 2)]
         """
         # From matched string to number of N-grams shared with query string
         shared = {}
@@ -301,7 +302,7 @@ class NGram(set):
         >>> from ngram import NGram
         >>> n = NGram([(0, "SPAM"), (1, "SPAN"), (2, "EG"),
         ... (3, "SPANN")], key=lambda x:x[1])
-        >>> n.searchitem((2, "SPA"), 0.35)
+        >>> sorted(n.searchitem((2, "SPA"), 0.35))
         [((0, 'SPAM'), 0.375), ((1, 'SPAN'), 0.375)]
         """
         return self.search(self.key(item), threshold)
@@ -317,7 +318,7 @@ class NGram(set):
 
         >>> from ngram import NGram
         >>> n = NGram([(0, "SPAM"), (1, "SPAN"), (2, "EG")], key=lambda x:x[1])
-        >>> n.search("SPA")
+        >>> sorted(n.search("SPA"))
         [((0, 'SPAM'), 0.375), ((1, 'SPAN'), 0.375)]
         >>> n.search("M")
         [((0, 'SPAM'), 0.125)]
@@ -441,7 +442,7 @@ class NGram(set):
         >>> from ngram import NGram
         >>> n = NGram(["spam"])
         >>> n.update(["eggs"])
-        >>> list(n)
+        >>> sorted(list(n))
         ['eggs', 'spam']
         """
         for item in items:
@@ -467,7 +468,7 @@ class NGram(set):
 
         >>> from ngram import NGram
         >>> n = NGram(['spam', 'eggs'])
-        >>> list(n)
+        >>> sorted(list(n))
         ['eggs', 'spam']
         >>> n.clear()
         >>> list(n)
@@ -483,7 +484,7 @@ class NGram(set):
         >>> from ngram import NGram
         >>> a = NGram(['spam', 'eggs'])
         >>> b = NGram(['spam', 'ham'])
-        >>> list(a.union(b))
+        >>> sorted(list(a.union(b)))
         ['eggs', 'ham', 'spam']
         """
         return self.copy(super(NGram, self).union(*others))
@@ -541,7 +542,7 @@ class NGram(set):
         >>> from ngram import NGram
         >>> a = NGram(['spam', 'eggs'])
         >>> b = NGram(['spam', 'ham'])
-        >>> list(a.symmetric_difference(b))
+        >>> sorted(list(a.symmetric_difference(b)))
         ['eggs', 'ham']
         """
         return self.copy(super(NGram, self).symmetric_difference(other))
@@ -553,7 +554,7 @@ class NGram(set):
         >>> n = NGram(['spam', 'eggs'])
         >>> other = set(['spam', 'ham'])
         >>> n.symmetric_difference_update(other)
-        >>> list(n)
+        >>> sorted(list(n))
         ['eggs', 'ham']
         """
         intersection = super(NGram, self).intersection(other)

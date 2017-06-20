@@ -122,19 +122,19 @@ NGram instance.
 
     >>> G = ngram.NGram(['joe','joseph','jon','john','sally'])
     >>> G.update(['jonathan'])
-    >>> list(G)
-    ['john', 'joseph', 'joe', 'jonathan', 'sally', 'jon']
+    >>> sorted(list(G))
+    ['joe', 'john', 'jon', 'jonathan', 'joseph', 'sally']
     >>> G.discard('sally')
-    >>> list(G)
-    ['john', 'joseph', 'joe', 'jonathan', 'jon']
+    >>> sorted(list(G))
+    ['joe', 'john', 'jon', 'jonathan', 'joseph']
     >>> G.difference_update(ngram.NGram(['joe']))
-    >>> list(G)
-    ['john', 'joseph', 'jonathan', 'jon']
+    >>> sorted(list(G))
+    ['john', 'jon', 'jonathan', 'joseph']
     >>> G.intersection_update(['james', 'joseph', 'joe', 'jon'])
-    >>> list(G)
-    ['joseph', 'jon']
+    >>> sorted(list(G))
+    ['jon', 'joseph']
     >>> G.symmetric_difference_update(ngram.NGram(['jimmy', 'jon']))
-    >>> list(G)
+    >>> sorted(list(G))
     ['jimmy', 'joseph']
 
 
