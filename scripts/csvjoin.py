@@ -29,7 +29,7 @@ def main(left_path, left_column, right_path, right_column,
                   threshold=minscore,
                   warp=warp, key=lambda x: lowstrip(x[right_column]))
     left_file = csv.reader(open(left_path, 'r'))
-    out = csv.writer(open(outfile, 'w'))
+    out = csv.writer(open(outfile, 'w'), lineterminator='\n')
     if titles:
         left_header = next(left_file)
         out.writerow(left_header + ["Rank", "Similarity"] + right_header)
