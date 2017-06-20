@@ -5,10 +5,10 @@ Version 3.3.1
 -------------
 Released 2017-06-20
 
-    * Fixed bug in remove and pop attempting to delete an ngram multiple times.
-    * Add DeprecationWarning for use of iconv param, ngrams method, ngrams_pad method.
-    * Fixed csvjoin_test to run on Windows.
-    * Fixed doctests to support dictionary random iteration order.
+* Fixed bug in remove and pop attempting to delete an ngram multiple times.
+* Add DeprecationWarning for use of iconv param, ngrams method, ngrams_pad method.
+* Fixed csvjoin_test to run on Windows.
+* Fixed doctests to support dictionary random iteration order.
 
 Version 3.3.0
 -------------
@@ -31,9 +31,9 @@ Version 3.2.1
 -------------
 Released 2012-06-28
 
-    * Fix bug in symmetric_difference_update method
-    * Update release notes / changelog
-    * Update tutorial
+* Fix bug in symmetric_difference_update method
+* Update release notes / changelog
+* Update tutorial
 
 Version 3.2.0
 -------------
