@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 3.3.1
+Version 3.3.2
 -------------
 Released 2017-06-20
 

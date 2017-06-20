@@ -44,7 +44,7 @@ if sys.version_info >= (3,):
 setup(
     name='ngram',
     description='A `set` subclass providing fuzzy search based on N-grams.',
-    version='3.3.1',
+    version='3.3.2',
     license='LGPLv3+',
     py_modules=['ngram'],
     zip_safe=True,
