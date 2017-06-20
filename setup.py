@@ -51,7 +51,7 @@ setup(
     author='Graham Poulter, Michael Albert',
     maintainer='Graham Poulter',
     url='http://github.com/gpoulter/python-ngram',
-    download_url='http://pypi.python.org/pypi/ngram',
+    download_url='https://pypi.python.org/pypi/ngram',
     keywords="ngram set string text similarity",
     scripts=['scripts/csvjoin.py'],
     platforms=['any'],
