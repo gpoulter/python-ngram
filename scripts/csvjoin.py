@@ -15,7 +15,7 @@ from ngram import NGram
 
 def lowstrip(term):
     """Convert to lowercase and strip spaces"""
-    term = re.sub('\s+', ' ', term)
+    term = re.sub(r'\s+', ' ', term)
     term = term.lower()
     return term
 
