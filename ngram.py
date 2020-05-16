@@ -50,7 +50,7 @@ class NGram(set):
     :type pad_char: str or unicode
 
     :param pad_char: character to use for padding.  Default is '$', but \
-    consider using the\ non-breaking space character, ``u'\\xa0'`` \
+    consider using the\\ non-breaking space character, ``u'\\xa0'`` \
     (``u"\\u00A0"``).
 
     :type key: function(item) -> str/unicode
@@ -62,7 +62,7 @@ class NGram(set):
     Instance variables:
 
     :ivar _grams: For each n-gram, the items containing it and the number of \
-    times\ the n-gram occurs in the item as ``{str:{item:int, ...}, ...}``.
+    times\\ the n-gram occurs in the item as ``{str:{item:int, ...}, ...}``.
 
     :ivar length: maps items to length of the padded string representations \
     as ``{item:int, ...}``.
