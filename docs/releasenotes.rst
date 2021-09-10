@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 4.0.1
+-------------
+Released 2021-09-10
+
+* Switched documentation host to ReadTheDocs because sphinx_upload stopped working.
+
 Version 4.0.0
 -------------
 Released 2021-09-10

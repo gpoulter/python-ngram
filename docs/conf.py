@@ -14,7 +14,7 @@ project = u'Python NGram'
 version = '4.0'
 
 # The full version, including alpha/beta/rc tags.
-release = '4.0.0'
+release = '4.0.1'
 
 # Language the docs are written in.
 language = 'en'
