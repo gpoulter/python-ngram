@@ -2,6 +2,6 @@ include COPYING
 include COPYING.LESSER
 include tox.ini
 graft docs
-prune docs/_build
+prune docs/build
 graft tests
 global-exclude *.pyc
