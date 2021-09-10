@@ -46,8 +46,12 @@ Since late 2008, Graham Poulter has maintained python-ngram, initially refactori
 it to build on the `set` class, and also adding features, documentation, tests,
 performance improvements and Python 3 support.
 
-Primary development takes place on `GitHub`_, but changes are also pushed
-to the earlier repo on `Google Code`_.
+Development
+===========
+
+Development takes place on `Github`_.  On checking out the repo run `tox` to build
+the Sphinx documentation and run tests.  Run `pip install -e .` to install the module 
+in editable mode, inside a virtualenv.
 
 .. _documentation: http://packages.python.org/ngram/
 .. _tutorial: http://packages.python.org/ngram/tutorial.html
@@ -58,4 +62,3 @@ to the earlier repo on `Google Code`_.
 .. _String::Trigram: http://search.cpan.org/dist/String-Trigram/
 .. _Sourceforge: https://sourceforge.net/projects/python-ngram/
 .. _GitHub: http://github.com/gpoulter/python-ngram
-.. _Google Code: http://code.google.com/p/python-ngram/

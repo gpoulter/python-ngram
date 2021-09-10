@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 4.0.0
+-------------
+Released 2021-09-09
+
+* Removed tests for Python 2.7 and the future imports.
+
 Version 3.3.2
 -------------
 Released 2017-06-20

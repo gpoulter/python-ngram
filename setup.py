@@ -3,10 +3,7 @@
 import inspect
 import os
 import sys
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup  # pylint: disable=W402,W801
+from setuptools import setup
 
 ROOT = os.path.dirname(inspect.getfile(inspect.currentframe()))
 
@@ -22,11 +19,8 @@ Topic :: Text Processing :: Indexing
 Topic :: Text Processing :: Linguistic
 Operating System :: OS Independent
 Programming Language :: Python
-Programming Language :: Python :: 2
-Programming Language :: Python :: 2.6
-Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3
-Programming Language :: Python :: 3.2
+Programming Language :: Python :: 3.8
 """
 
 params = dict()
@@ -37,14 +31,10 @@ with open(os.path.join(ROOT, 'README')) as docs:
 params['classifiers'] = [c.strip()
     for c in classifiers.split('\n') if c.strip()]
 
-if sys.version_info >= (3,):
-    params['use_2to3'] = True
-    params['convert_2to3_doctests'] = ['docs/tutorial.rst', 'ngram.py']
-
 setup(
     name='ngram',
     description='A `set` subclass providing fuzzy search based on N-grams.',
-    version='3.3.2',
+    version='4.0.0',
     license='LGPLv3+',
     py_modules=['ngram'],
     zip_safe=True,
