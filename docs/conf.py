@@ -24,7 +24,7 @@ copyright = 'Graham Poulter, Michel Albert 2008-2021'
 
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.
-exclude_trees = ['_build']
+exclude_trees = ['build']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
