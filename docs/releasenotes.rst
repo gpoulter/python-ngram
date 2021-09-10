@@ -3,9 +3,9 @@ Release Notes
 
 Version 4.0.0
 -------------
-Released 2021-09-09
+Released 2021-09-10
 
-* Removed tests for Python 2.7 and the future imports.
+* Removed Python 2.7 support since 2to3 support is removed from recent setuptools.
 
 Version 3.3.2
 -------------
