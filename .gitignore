@@ -7,4 +7,4 @@ __pycache__
 /.vscode
 /build
 /dist
-/docs/_build
+/docs/build

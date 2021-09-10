@@ -1,5 +1,5 @@
-Python NGram 3.3 documentation
-++++++++++++++++++++++++++++++
+Python NGram documentation
+++++++++++++++++++++++++++
 
 .. toctree::
    :maxdepth: 3
