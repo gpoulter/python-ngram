@@ -149,8 +149,8 @@ character:
 
 .. doctest::
 
-    >>> index = ngram.NGram(N=3, pad_char=b'$')
-    >>> list(index.ngrams(index.pad(b'abc')))
+    >>> index = ngram.NGram(N=3, pad_char=b'$', pad_len=2)
+    >>> list(index.split(b'abc'))
     [b'$$a', b'$ab', b'abc', b'bc$', b'c$$']
 
 NGram will not work correctly with UTF-8 encoded bytes, because

@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 4.0.3
+-------------
+Released 2021-09-15
+
+* Fixed the setup.cfg
+
 Version 4.0.1
 -------------
 Released 2021-09-10
